@@ -310,7 +310,7 @@ jitfunc2_t instr1to2(uint32_t oma) {
 #define JIT_PROC2_pos_S(p, v) jit_insn_store_relative(function, (p), offsetof(PROC2, pos), (v))
 #define JIT_W_ADDR() jit_insn_add_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2))
 #define JIT_W() jit_insn_load_relative(function, w_addr, 0, jit_type_ulong)
-#define JIT_TYPE(s)  (((jit_type_t[]){jit_type_ubyte, jit_type_ushort, (jit_type_t) 0, jit_type_uint})[sizeof(s)])
+#define JIT_TYPE(s)  (((jit_type_t[]){jit_type_ubyte, jit_type_ushort, (jit_type_t) 0, jit_type_uint, (jit_type_t) 0, (jit_type_t) 0, (jit_type_t) 0, jit_type_ulong})[sizeof(s)-1])
 
 int remove_proc_jit(_corefun0) { //returns 1 if battle ends, 0 otherwise
   --l_nprocs[l_w2];
