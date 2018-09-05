@@ -2558,7 +2558,6 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
   /******** END OF IT ********/
 
   /******** NEW C PARSER ********/
-  #warning "new parser not yet implemented"
   long c;
   for(c = 0; c < WARRIORS; ++c) {
     FILE* red = fopen(redfn[c], "rt");
