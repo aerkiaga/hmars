@@ -1099,6 +1099,8 @@ int init_parser() {
     #endif
   }
 
+  set_dictionary(&d_opcodes, restricted_copy("XXX"), (void*)1);
+
   if(parsopt.allow_pseudo_org) set_dictionary(&d_pseudoops, restricted_copy("ORG"), (void*)1);
   if(parsopt.allow_pseudo_equ) set_dictionary(&d_pseudoops, restricted_copy("EQU"), (void*)1);
   if(parsopt.allow_pseudo_for) set_dictionary(&d_pseudoops, restricted_copy("FOR"), (void*)1);
@@ -3553,6 +3555,7 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
         #if defined(EXT_XCH_b)
         case 0x584348:
         #endif
+        case 0x585858: //XXX
           def_nops = 2;
           break;
         default:
@@ -3984,6 +3987,7 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
           #if defined(EXT_XCH_a)
           case 0x584348:
           #endif
+          case 0x585858: //XXX
             s_md = 'F';
             break;
 

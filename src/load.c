@@ -112,6 +112,9 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
       #ifdef O_STS
       case 0x535453: op = O_STS; break;
       #endif
+      case 0x585858: //XXX
+        op = pcg32_boundedrand_r(&randomgen, O_COUNT);
+        break;
       default:
         error("Unknown opcode: %c%c%c", in[i-2], in[i-1], in[i]);
     }
@@ -134,6 +137,9 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
       case 'F': mod = M_F; break;
       case 'X': mod = M_X; break;
       case 'I': mod = M_I; break;
+    }
+    if(s_op == 0x585858) {
+      mod = pcg32_boundedrand_r(&randomgen, M_COUNT);
     }
     w->code1[c]._M = mod;
     i += 2;
@@ -167,6 +173,9 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
       #ifdef A_PIB
       case '>': adA = A_PIB; break;
       #endif
+    }
+    if(s_op == 0x585858) {
+      adA = pcg32_boundedrand_r(&randomgen, A_COUNT);
     }
     w->code1[c]._aA = adA;
     int valA = 0;
@@ -211,6 +220,9 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
       case '>': adB = A_PIB; break;
       #endif
     }
+    if(s_op == 0x585858) {
+      adB = pcg32_boundedrand_r(&randomgen, A_COUNT);
+    }
     w->code1[c]._aB = adB;
     int valB = 0;
     while(isblank(in[++i])) ;
@@ -221,6 +233,13 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
     while(isdigit(in[i])) valB = (valB * 10) + (in[i++] - '0');
     if(neg) valB = CORESIZE - valB;
     w->code1[c]._B = valB;
+    if(s_op == 0x585858) {
+      if(valB < valA) valB += CORESIZE;
+      w->code1[c]._A = valA + pcg32_boundedrand_r(&randomgen, valB - valA + 1);
+      w->code1[c]._B = valA + pcg32_boundedrand_r(&randomgen, valB - valA + 1);
+      if(w->code1[c]._A >= CORESIZE) w->code1[c]._A -= CORESIZE;
+      if(w->code1[c]._B >= CORESIZE) w->code1[c]._B -= CORESIZE;
+    }
   }
   return;
 }
@@ -2600,8 +2619,6 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
     minit(warriors[c].mutex);
     #endif
   }
-
-  //exit(0); //D
 
   /******** END OF IT ********/
 

@@ -158,6 +158,7 @@ typedef uint_fast16_t pcell_t;
 #else
 #define _V_STS_ _V_DJZ_
 #endif
+#define O_COUNT _V_STS_
 
 #if STANDARD == 86
 #define opt_SPL86 //uses B-field. Next is new process
@@ -170,6 +171,7 @@ typedef uint_fast16_t pcell_t;
 #define M_AB 4
 #define M_BA 5
 #define M_I 6
+#define M_COUNT 7
 
 #if STANDARD <= 86
 #define A_IMM 0 //default
@@ -181,6 +183,7 @@ typedef uint_fast16_t pcell_t;
 #define A_INB 2
 #if STANDARD == 86
 #define A_ADB 3
+#define A_COUNT 4
 #elif STANDARD > 86
 #define A_PDB 3
 #if STANDARD >= 94
@@ -188,6 +191,9 @@ typedef uint_fast16_t pcell_t;
 #define A_INA 5
 #define A_PDA 6
 #define A_PIA 7
+#define A_COUNT 8
+#else
+#define A_COUNT 4
 #endif
 #endif
 
