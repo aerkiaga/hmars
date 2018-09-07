@@ -32,13 +32,28 @@ void error(const char* msg, ...) {
   exit(0);
 }
 
-void py_error(const char* msg, ...) {
-  va_list args;
-  va_start(args, msg);
-  char str[strlen(msg) + 14];
-  sprintf(str, "Parser Error: %s\n", msg);
-  vprintf(str, args);
-  va_end(args);
+void _Noreturn display_help_exit() {
+  puts(
+    "hMARS  v0.3-pre, Copyright (C) 2018  Aritz Erkiaga\n"
+    "Usage:\n"
+    #ifdef _COREVIEW_
+    "hmars-gui [options] file1 [-l loadfile] file2 ...\n"
+    #else
+    "hmars [options] file1 [-l loadfile] file2 ...\n"
+    #endif
+    "\n"
+    "Options:\n"
+    "  -r num   Number of rounds to fight [1]\n"
+    "  -l file  Output loadfile, must come after warrior file\n"
+    "  -V       Increase verbosity one level, up to two\n"
+    "\n"
+    "Example:\n"
+    #ifdef _COREVIEW_
+    "hmars-gui -r 200 -V -V some.red -l out.red other.red\n"
+    #else
+    "hmars -r 200 -V -V some.red -l out.red other.red\n"
+    #endif
+  );
   exit(0);
 }
 
@@ -86,6 +101,8 @@ int main(int argc, char* argv[]) {
     }
   }
   WARRIORS = redfnc;
+
+  if(!WARRIORS) display_help_exit();
 
   initialize();
   if(parse_load(redfn, lfn, argv[0])) {
