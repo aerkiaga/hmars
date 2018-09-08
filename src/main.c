@@ -82,7 +82,11 @@ void test_crash_handler(int sig) {
     case SIGILL: puts("SIGILL"); break;
     case SIGFPE: puts("SIGFPE"); break;
   }
+<<<<<<< HEAD
   if(test_crash_loaded) print_offending_code();
+=======
+  if(test_crash_loaded) print_offending_code()
+>>>>>>> 85301d41eb7d8cada9109bd26bf74471c1540fbe
   else puts("No warrior was loaded.");
   puts("");
   puts("FAILED!");
