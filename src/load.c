@@ -18,7 +18,6 @@
 
 //#include "Python.h"
 #include "defs.h"
-#include "text.h"
 
 pcg32_random_t randomgen;
 #ifdef _COREVIEW_
@@ -2580,6 +2579,9 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
   long c;
   for(c = 0; c < WARRIORS; ++c) {
     FILE* red = fopen(redfn[c], "rt");
+    if(red == NULL) {
+      error("Could not open %s.", redfn[c]);
+    }
     LINE* redt = file2text(red);
     fclose(red);
     LINE* loadt = parse(redt, &warriors[c]);

@@ -27,6 +27,9 @@
 #include <jit/jit.h>
 #include "pcg_variants.h"
 #include "entropy.h"
+
+typedef struct t_WARRIOR WARRIOR;
+#include "text.h"
 #ifdef _COREVIEW_
 #ifndef MULTITHREAD
 #warning "Coreview enables multithreading automatically."
@@ -261,7 +264,7 @@ typedef struct tINSTR2 {
   addr2_t a, b;
 } INSTR2;
 
-typedef struct t_WARRIOR {
+struct t_WARRIOR {
   unsigned long org;
   char* name; //;name
   char* author; //;author
@@ -284,7 +287,7 @@ typedef struct t_WARRIOR {
   #ifdef _COREVIEW_
   uint32_t color; //l_coreviewdata warrior color
   #endif
-} WARRIOR; //when change this, update JIT definition
+}; //when changing this, update JIT definition
 
 typedef struct t_PROC1 {
   uint16_t pos;
@@ -451,6 +454,8 @@ extern void debug_println1(uint64_t);
 extern void signal_terminate(void);
 extern int check_terminate(void);
 extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
+extern void load1(WARRIOR*, LINE*);
+extern void load2(WARRIOR*, LINE*);
 //Global for all threads
 extern void initialize(void);
 extern void finalize(void);

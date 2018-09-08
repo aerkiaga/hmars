@@ -17,7 +17,6 @@
 **/
 
 #include "defs.h"
-#include "text.h"
 #include <stdarg.h>
 
 struct tPARSOPT {

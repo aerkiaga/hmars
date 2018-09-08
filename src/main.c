@@ -19,10 +19,12 @@
 #include "defs.h"
 #include "multithread.h"
 
+#define PATH_TEST_TEST "./test/test.red"
+
 unsigned int ROUNDS = 1;
 unsigned int WARRIORS = 0;
 
-void error(const char* msg, ...) {
+void _Noreturn error(const char* msg, ...) {
   va_list args;
   va_start(args, msg);
   char str[strlen(msg) + 14];
@@ -38,14 +40,17 @@ void _Noreturn display_help_exit() {
     "Usage:\n"
     #ifdef _COREVIEW_
     "hmars-gui [options] file1 [-l loadfile] file2 ...\n"
+    "hmars-gui --test\n"
     #else
     "hmars [options] file1 [-l loadfile] file2 ...\n"
+    "hmars --test\n"
     #endif
     "\n"
     "Options:\n"
     "  -r num   Number of rounds to fight [1]\n"
     "  -l file  Output loadfile, must come after warrior file\n"
     "  -V       Increase verbosity one level, up to two\n"
+    "  --test   Perform self test, ignores other arguments\n"
     "\n"
     "Example:\n"
     #ifdef _COREVIEW_
@@ -58,6 +63,57 @@ void _Noreturn display_help_exit() {
 }
 
 int opt_VERBOSE = 0;
+
+int self_test() {
+  puts("Performing self test...");
+  /*TEST 1*/
+  puts("TEST 1: classic vs JIT");
+  WARRIORS = 1;
+  initialize();
+  warriors = malloc(WARRIORS * sizeof(WARRIOR));
+  FILE* red = fopen(PATH_TEST_TEST, "rt");
+  if(red == NULL) {
+    error("Could not open %s.", PATH_TEST_TEST);
+  }
+  LINE* redt = file2text(red);
+  fclose(red);
+  LINE* loadt = parse(redt, &warriors[0]);
+  freetext(redt);
+  if(loadt == NULL) {
+    free(warriors);
+    return -1;
+  }
+  int n;
+  int wins = 0;
+  for(n = 0; n < 1000; ++n) {
+    load1(&warriors[0], loadt);
+    load2(&warriors[0], loadt);
+    #if PSPACESIZE
+    warriors[0].pspace = calloc(PSPACESIZE, sizeof(pcell_t));
+    #endif
+    int w;
+    battle1_single(1);
+    w = warriors[0].wins;
+    warriors[0].wins = warriors[0].losses = 0;
+    battle2_single(1);
+    if(w != warriors[0].wins) {
+      free(warriors);
+      puts("FAILED!");
+      return 1;
+    }
+    wins += w;
+    free(warriors[0].code1);
+    free(warriors[0].code2);
+    #if PSPACESIZE
+    free(warriors[0].pspace);
+    #endif
+  }
+  printf("wins: %d / 1000\n", wins);
+  puts("PASSED!");
+
+  unload_all();
+  return 0;
+}
 
 int main(int argc, char* argv[]) {
   #if __STDC_VERSION__ >= 201112L
@@ -72,7 +128,7 @@ int main(int argc, char* argv[]) {
   int redfnc = 0;
   for(c = 1; c < argc; ++c) {
     if(argv[c][0] == '-') {
-      if(argv[c][2] != '\0') error("Unknown option %s", argv[c]);
+      if((argv[c][2] != '\0') && (argv[c][1] != '-')) error("Unknown option %s", argv[c]);
       switch(argv[c][1]) {
         case 'V':
           opt_VERBOSE += 1;
@@ -87,6 +143,15 @@ int main(int argc, char* argv[]) {
           ++c;
           if(c == argc) error("Option -r must be followed by number of rounds.");
           sscanf(argv[c], "%d", &ROUNDS);
+          break;
+        case '-':
+          if(!strcmp(&(argv[c][2]), "test")) {
+            ++c;
+            return self_test();
+          }
+          else {
+            error("Unknown option %s", argv[c]);
+          }
           break;
         default:
           error("Unknown option %s", argv[c]);
