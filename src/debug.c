@@ -558,3 +558,8 @@ void debug_println1(uint64_t i) {
   printf("%s.%s\t%c%d,\t%c%d\n", s_op, s_mod, c_aA, I._A, c_aB, I._B);
   return;
 }
+
+void debug_println2(INSTR2 I) {
+  printf("%-*p %d,\t%d\n", (int) sizeof(void*) * 2, I.fn, I.a, I.b);
+  return;
+}

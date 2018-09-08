@@ -451,6 +451,7 @@ extern void battle1_multithread(unsigned long, unsigned int); //multithread, blo
 extern LOCAL_CORE* battle1_async(unsigned long); //one new thread, non-blocking
 void wait_for_core(LOCAL_CORE*); //wait for battle termination
 extern void debug_println1(uint64_t);
+extern void debug_println2(INSTR2);
 extern void signal_terminate(void);
 extern int check_terminate(void);
 extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);

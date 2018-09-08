@@ -2050,6 +2050,7 @@ void simulate2(_corefun0) {
       addr2_t a, b;
       a = l_core2[pc].a;
       b = l_core2[pc].b;
+      //debug_println2(l_core2[pc]); //D
       if(l_core2[pc].fn(_corecall l_core2, pc, a, b)) goto _label_endbattle; //<here sigsegv
     }
   }
