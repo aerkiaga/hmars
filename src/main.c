@@ -88,9 +88,14 @@ int self_test() {
   for(n = 0; n < 1000; ++n) {
     load1(&warriors[0], loadt);
     load2(&warriors[0], loadt);
+
     #if PSPACESIZE
     warriors[0].pspace = calloc(PSPACESIZE, sizeof(pcell_t));
     #endif
+    #ifdef TSAFE_CORE
+    minit(warriors[0].mutex);
+    #endif
+
     int w;
     battle1_single(1);
     w = warriors[0].wins;
@@ -104,8 +109,12 @@ int self_test() {
     wins += w;
     free(warriors[0].code1);
     free(warriors[0].code2);
+
     #if PSPACESIZE
     free(warriors[0].pspace);
+    #endif
+    #ifdef TSAFE_CORE
+    mdestroy(warriors[0].mutex);
     #endif
   }
   printf("wins: %d / 1000\n", wins);
