@@ -69,6 +69,9 @@ void print_offending_code() {
   puts("Loaded code of the offending warrior:");
   int c;
   for(c = 0; c < warriors[0].len; ++c) {
+    if(warriors[0].code2 != NULL) {
+      printf("(%p) ", warriors[0].code2[c].fn);
+    }
     debug_println1(warriors[0].code1[c]._I);
   }
   return;
@@ -82,11 +85,7 @@ void test_crash_handler(int sig) {
     case SIGILL: puts("SIGILL"); break;
     case SIGFPE: puts("SIGFPE"); break;
   }
-<<<<<<< HEAD
   if(test_crash_loaded) print_offending_code();
-=======
-  if(test_crash_loaded) print_offending_code()
->>>>>>> 85301d41eb7d8cada9109bd26bf74471c1540fbe
   else puts("No warrior was loaded.");
   puts("");
   puts("FAILED!");
