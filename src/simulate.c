@@ -1098,7 +1098,7 @@ void simulate1(_corefun0) {
               else REMOVE_PROC();
               break;
             case M_AB:
-              if(ai._B) {
+              if(ai._A) {
                 #ifdef HOOK_ONWRITE
               hook_onwrite_B(_corecall bp, bi._B / ai._A);
               #else
@@ -1111,7 +1111,7 @@ void simulate1(_corefun0) {
               else REMOVE_PROC();
               break;
             case M_BA:
-              if(ai._A) {
+              if(ai._B) {
                 #ifdef HOOK_ONWRITE
               hook_onwrite_A(_corecall bp, bi._A / ai._B);
               #else
@@ -1205,7 +1205,7 @@ void simulate1(_corefun0) {
               else REMOVE_PROC();
               break;
             case M_AB:
-              if(ai._B) {
+              if(ai._A) {
                 #ifdef HOOK_ONWRITE
                 hook_onwrite_B(_corecall bp, bi._B % ai._A);
                 #else
@@ -1218,7 +1218,7 @@ void simulate1(_corefun0) {
               else REMOVE_PROC();
               break;
             case M_BA:
-              if(ai._A) {
+              if(ai._B) {
                 #ifdef HOOK_ONWRITE
                 hook_onwrite_A(_corecall bp, bi._A % ai._B);
                 #else
