@@ -1797,7 +1797,7 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpa_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
-              jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpa_2), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
               break; }
             case M_B: case M_AB: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -1806,7 +1806,7 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
-              jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpb_2), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
             case M_F: case M_X: case M_I:  {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -1819,18 +1819,18 @@ void load2(WARRIOR* w, LINE* txt) {
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
-              jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpa_2), &labele);
-              jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpb_2), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
           }
-            JIT_PROC2_pos_S(tmp2, ap);
-          jit_insn_branch(function, &labelb);
-          jit_insn_label(function, &labele);
             jit_value_t pos = JIT_PROC2_pos_L(tmp2);
             jit_value_t pos_ = jit_insn_add(function, pos, JIT_CONST(1, jit_type_addr2s));
             jit_value_t pos_2;
             BOUND_CORESIZE_HIGH_JIT(pos_2, pos_);
             JIT_PROC2_pos_S(tmp2, pos_2);
+          jit_insn_branch(function, &labelb);
+          jit_insn_label(function, &labele);
+            JIT_PROC2_pos_S(tmp2, ap);
           jit_insn_label(function, &labelb);
           jit_value_t next = JIT_PROC2_next_L(tmp2);
           jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
