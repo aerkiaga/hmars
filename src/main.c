@@ -18,6 +18,7 @@
 
 #include "defs.h"
 #include "multithread.h"
+#include <signal.h>
 
 #define PATH_TEST_TEST "./test/test.red"
 
@@ -64,6 +65,28 @@ void _Noreturn display_help_exit() {
 
 int opt_VERBOSE = 0;
 
+int test_crash_loaded = 0; //whether the offending warrior has been loaded
+void test_crash_handler(int sig) {
+  printf("Test code crashed: ");
+  switch(sig) {
+    case SIGSEGV: puts("SIGSEGV"); break;
+    case SIGILL: puts("SIGILL"); break;
+    case SIGFPE: puts("SIGFPE"); break;
+  }
+  if(test_crash_loaded) {
+    puts("Loaded code of the offending warrior:");
+    int c;
+    for(c = 0; c < warriors[0].len; ++c) {
+      debug_println1(warriors[0].code1[c]._I);
+    }
+  }
+  else puts("No warrior was loaded.");
+  puts("");
+  puts("FAILED!");
+  raise(SIGABRT); //abort
+  return;
+}
+
 int self_test() {
   puts("Performing self test...");
   /*TEST 1*/
@@ -83,10 +106,15 @@ int self_test() {
     free(warriors);
     return -1;
   }
+  signal(SIGSEGV, test_crash_handler);
+  signal(SIGILL, test_crash_handler);
+  signal(SIGFPE, test_crash_handler);
+
   int n;
   int wins = 0;
   for(n = 0; n < 1000; ++n) {
     load1(&warriors[0], loadt);
+    test_crash_loaded = 1;
     load2(&warriors[0], loadt);
 
     #if PSPACESIZE
@@ -107,11 +135,15 @@ int self_test() {
       return 1;
     }
     wins += w;
+    test_crash_loaded = 0;
     free(warriors[0].code1);
+    warriors[0].code1 = NULL;
     free(warriors[0].code2);
+    warriors[0].code2 = NULL;
 
     #if PSPACESIZE
     free(warriors[0].pspace);
+    warriors[0].pspace = NULL;
     #endif
     #ifdef TSAFE_CORE
     mdestroy(warriors[0].mutex);

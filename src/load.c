@@ -113,6 +113,10 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
       #endif
       case 0x585858: //XXX
         op = pcg32_boundedrand_r(&randomgen, O_COUNT);
+        #ifdef O_STS
+        if(op == O_STS) op = O_NOP; //we don't want undesired output
+        //sure there's a better way to do it
+        #endif
         break;
       default:
         error("Unknown opcode: %c%c%c", in[i-2], in[i-1], in[i]);
