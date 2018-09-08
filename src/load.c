@@ -2096,9 +2096,9 @@ void load2(WARRIOR* w, LINE* txt) {
         case O_LDP: {
           #ifdef TSAFE_CORE
           jit_label_t labelb = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int), 0, jit_type_sys_int)), &labelb);
+          jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int)), &labelb);
             jit_insn_call_native(function, NULL, mlock_helper_jit, signature_mlock_helper_jit, NULL, 0, JIT_CALL_NOTHROW);
-            jit_insn_store_relative(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int), 0, JIT_CONST(1, jit_type_sys_int));
+            jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), JIT_CONST(1, jit_type_sys_int));
           jit_insn_label(function, &labelb);
           #endif
           switch(c1[c]._M) {
@@ -2115,7 +2115,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2134,7 +2134,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2153,7 +2153,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2172,7 +2172,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2185,9 +2185,9 @@ void load2(WARRIOR* w, LINE* txt) {
         case O_STP: {
           #ifdef TSAFE_CORE
           jit_label_t labelb = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int), 0, jit_type_sys_int)), &labelb);
+          jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int)), &labelb);
             jit_insn_call_native(function, NULL, mlock_helper_jit, signature_mlock_helper_jit, NULL, 0, JIT_CALL_NOTHROW);
-            jit_insn_store_relative(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int), 0, JIT_CONST(1, jit_type_sys_int));
+            jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), JIT_CONST(1, jit_type_sys_int));
           jit_insn_label(function, &labelb);
           #endif
           switch(c1[c]._M) {
