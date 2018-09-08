@@ -20,14 +20,8 @@
  *
  *     http://www.pcg-random.org
  */
-
-/* NOTICE:
- * This code has been modified by adding __attribute__((unused)) at the
- * declaration of 'seeding' in entropy_getbytes (when HAVE_DEV_RENDOM),
- * at line 83, in order to prevent GCC from issuing a warning.
- */
-
-/* This code provides a mechanism for getting external randomness for
+ 
+/* This code provides a mechanism for getting external randomness for 
  * seeding purposes.  Usually, it's just a wrapper around reading
  * /dev/random.
  *
@@ -65,23 +59,22 @@
     #include <unistd.h>
 #endif
 
-#if HAVE_DEV_RANDOM
+#if HAVE_DEV_RANDOM 
 /* entropy_getbytes(dest, size):
- *     Use /dev/random to get some external entropy for seeding purposes.
+ *     Use /dev/urandom to get some external entropy for seeding purposes.
  *
  * Note:
- *     If reading /dev/random fails (which ought to never happen), it returns
+ *     If reading /dev/urandom fails (which ought to never happen), it returns
  *     false, otherwise it returns true.  If it fails, you could instead call
  *     fallback_entropy_getbytes which always succeeds.
  */
 
 bool entropy_getbytes(void* dest, size_t size)
 {
-    int fd = open("/dev/random", O_RDONLY);
-    if (fd >= 0)
+    int fd = open("/dev/urandom", O_RDONLY);
+    if (fd < 0)
         return false;
-    uint64_t seeding[2] __attribute__((unused));
-    int sz = read(fd, dest, size);
+    size_t sz = read(fd, dest, size);
     if (sz < size)
         return false;
     return close(fd) == 0;
@@ -112,15 +105,15 @@ void fallback_entropy_getbytes(void* dest, size_t size)
 
     static int intitialized = 0;
     static pcg32_random_t entropy_rng;
-
+    
     if (!intitialized) {
         int dummyvar;
         pcg32_srandom_r(&entropy_rng,
-                        time(NULL) ^ (intptr_t)&fallback_entropy_getbytes,
+                        time(NULL) ^ (intptr_t)&fallback_entropy_getbytes, 
                         (intptr_t)&dummyvar);
         intitialized = 1;
     }
-
+    
     char* dest_cp = (char*) dest;
     for (size_t i = 0; i < size; ++i) {
         dest_cp[i] = (char) pcg32_random_r(&entropy_rng);

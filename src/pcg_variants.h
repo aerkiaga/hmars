@@ -48,7 +48,7 @@
 #endif
 
 #if __GNUC_GNU_INLINE__  &&  !defined(__cplusplus)
-    #error Nonstandard GNU inlining semanatics. Compile with -std=c99 or better.
+    #error Nonstandard GNU inlining semantics. Compile with -std=c99 or better.
     // We could instead use macros PCG_INLINE and PCG_EXTERN_INLINE
     // but better to just reject ancient C code.
 #endif
@@ -63,7 +63,7 @@ extern "C" {
 
 inline uint8_t pcg_rotr_8(uint8_t value, unsigned int rot)
 {
-/* Unfortunately, clang is kinda pathetic when  it comes to properly
+/* Unfortunately, clang is kinda pathetic when it comes to properly
  * recognizing idiomatic rotate code, so for clang we actually provide
  * assembler directives (enabled with PCG_USE_INLINE_ASM).  Boo, hiss.
  */
@@ -98,7 +98,7 @@ inline uint32_t pcg_rotr_32(uint32_t value, unsigned int rot)
 inline uint64_t pcg_rotr_64(uint64_t value, unsigned int rot)
 {
 #if 0 && PCG_USE_INLINE_ASM && __clang__ && __x86_64__
-    // For whatever reason, clang actually *does* generator rotq by
+    // For whatever reason, clang actually *does* generate rotq by
     // itself, so we don't need this code.
     asm ("rorq   %%cl, %0" : "=r" (value) : "0" (value), "c" (rot));
     return value;
@@ -163,7 +163,7 @@ inline uint32_t pcg_output_xsh_rr_64_32(uint64_t state)
 #if PCG_HAS_128BIT_OPS
 inline uint64_t pcg_output_xsh_rr_128_64(pcg128_t state)
 {
-    return pcg_rotr_64(((state >> 29u) ^ state) >> 58u, state >> 122u);
+    return pcg_rotr_64(((state >> 35u) ^ state) >> 58u, state >> 122u);
 }
 #endif
 
@@ -269,38 +269,38 @@ inline pcg128_t pcg_output_xsl_rr_rr_128_128(pcg128_t state)
  * bizarre reason).
  */
 
-#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_ONESEQ_8_INITIALIZER      { 0xd7U }
 #define PCG_STATE_ONESEQ_16_INITIALIZER     { 0x20dfU }
 #define PCG_STATE_ONESEQ_32_INITIALIZER     { 0x46b56677U }
 #define PCG_STATE_ONESEQ_64_INITIALIZER     { 0x4d595df4d0f33173ULL }
+#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_ONESEQ_128_INITIALIZER                                       \
     { PCG_128BIT_CONSTANT(0xb8dc10e158a92392ULL, 0x98046df007ec0a53ULL) }
 #endif
 
-#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_UNIQUE_8_INITIALIZER      PCG_STATE_ONESEQ_8_INITIALIZER
 #define PCG_STATE_UNIQUE_16_INITIALIZER     PCG_STATE_ONESEQ_16_INITIALIZER
 #define PCG_STATE_UNIQUE_32_INITIALIZER     PCG_STATE_ONESEQ_32_INITIALIZER
 #define PCG_STATE_UNIQUE_64_INITIALIZER     PCG_STATE_ONESEQ_64_INITIALIZER
+#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_UNIQUE_128_INITIALIZER    PCG_STATE_ONESEQ_128_INITIALIZER
 #endif
 
-#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_MCG_8_INITIALIZER         { 0xe5U }
 #define PCG_STATE_MCG_16_INITIALIZER        { 0xa5e5U }
 #define PCG_STATE_MCG_32_INITIALIZER        { 0xd15ea5e5U }
 #define PCG_STATE_MCG_64_INITIALIZER        { 0xcafef00dd15ea5e5ULL }
+#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_MCG_128_INITIALIZER                                          \
     { PCG_128BIT_CONSTANT(0x0000000000000000ULL, 0xcafef00dd15ea5e5ULL) }
 #endif
 
-#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_SETSEQ_8_INITIALIZER      { 0x9bU, 0xdbU }
 #define PCG_STATE_SETSEQ_16_INITIALIZER     { 0xe39bU, 0x5bdbU }
 #define PCG_STATE_SETSEQ_32_INITIALIZER     { 0xec02d89bU, 0x94b95bdbU }
 #define PCG_STATE_SETSEQ_64_INITIALIZER                                        \
     { 0x853c49e6748fea9bULL, 0xda3e39cb94b95bdbULL }
+#if PCG_HAS_128BIT_OPS
 #define PCG_STATE_SETSEQ_128_INITIALIZER                                       \
     { PCG_128BIT_CONSTANT(0x979c9a98d8462005ULL, 0x7d3e9cb6cfe0549bULL),       \
       PCG_128BIT_CONSTANT(0x0000000000000001ULL, 0xda3e39cb94b95bdbULL) }
@@ -2187,19 +2187,19 @@ extern void     pcg64_advance(pcg128_t delta);
 #define PCG64F_INITIALIZER      PCG_STATE_MCG_128_INITIALIZER
 #endif
 
-#if PCG_HAS_128BIT_OPS
 #define PCG8SI_INITIALIZER      PCG_STATE_ONESEQ_8_INITIALIZER
 #define PCG16SI_INITIALIZER     PCG_STATE_ONESEQ_16_INITIALIZER
 #define PCG32SI_INITIALIZER     PCG_STATE_ONESEQ_32_INITIALIZER
 #define PCG64SI_INITIALIZER     PCG_STATE_ONESEQ_64_INITIALIZER
+#if PCG_HAS_128BIT_OPS
 #define PCG128SI_INITIALIZER    PCG_STATE_ONESEQ_128_INITIALIZER
 #endif
 
-#if PCG_HAS_128BIT_OPS
 #define PCG8I_INITIALIZER       PCG_STATE_SETSEQ_8_INITIALIZER
 #define PCG16I_INITIALIZER      PCG_STATE_SETSEQ_16_INITIALIZER
 #define PCG32I_INITIALIZER      PCG_STATE_SETSEQ_32_INITIALIZER
 #define PCG64I_INITIALIZER      PCG_STATE_SETSEQ_64_INITIALIZER
+#if PCG_HAS_128BIT_OPS
 #define PCG128I_INITIALIZER     PCG_STATE_SETSEQ_128_INITIALIZER
 #endif
 
