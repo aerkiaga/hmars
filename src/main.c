@@ -65,6 +65,15 @@ void _Noreturn display_help_exit() {
 
 int opt_VERBOSE = 0;
 
+void print_offending_code() {
+  puts("Loaded code of the offending warrior:");
+  int c;
+  for(c = 0; c < warriors[0].len; ++c) {
+    debug_println1(warriors[0].code1[c]._I);
+  }
+  return;
+}
+
 int test_crash_loaded = 0; //whether the offending warrior has been loaded
 void test_crash_handler(int sig) {
   printf("Test code crashed: ");
@@ -73,13 +82,7 @@ void test_crash_handler(int sig) {
     case SIGILL: puts("SIGILL"); break;
     case SIGFPE: puts("SIGFPE"); break;
   }
-  if(test_crash_loaded) {
-    puts("Loaded code of the offending warrior:");
-    int c;
-    for(c = 0; c < warriors[0].len; ++c) {
-      debug_println1(warriors[0].code1[c]._I);
-    }
-  }
+  if(test_crash_loaded) print_offending_code()
   else puts("No warrior was loaded.");
   puts("");
   puts("FAILED!");
@@ -130,6 +133,9 @@ int self_test() {
     warriors[0].wins = warriors[0].losses = 0;
     battle2_single(1);
     if(w != warriors[0].wins) {
+      puts("Both engines produced different results.");
+      print_offending_code();
+
       free(warriors);
       puts("FAILED!");
       return 1;
