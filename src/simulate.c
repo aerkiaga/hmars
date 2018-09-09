@@ -1333,7 +1333,7 @@ void simulate1(_corefun0) {
               }
               break;
             case M_F: case M_I: case M_X:
-              if(bi._A && bi._B) {l_proc1[w]->pos = ap;}
+              if(bi._A || bi._B) {l_proc1[w]->pos = ap;}
               else {
                 l_proc1[w]->pos++;
                 BOUND_CORESIZE(l_proc1[w]->pos);

@@ -1680,14 +1680,17 @@ void load2(WARRIOR* w, LINE* txt) {
                 break; }
               case M_F: case M_I: case M_X: {
                 jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, a), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, b), &labele);
+                jit_label_t labelb = jit_label_undefined;
+                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, a), &labele);
+                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, b), &labele);
+                jit_insn_branch(function, &labelb);
+                jit_insn_label(function, &labele);
                   jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
                   JIT_PROC2_pos_S(tmp1, ap);
                   jit_value_t next = JIT_PROC2_next_L(tmp1);
                   jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
                   jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
+                jit_insn_label(function, &labelb);
                 break; }
             }
           }
@@ -1719,16 +1722,19 @@ void load2(WARRIOR* w, LINE* txt) {
                 break; }
               case M_F: case M_I: case M_X: {
                 jit_label_t labele = jit_label_undefined;
+                jit_label_t labelb = jit_label_undefined;
                 jit_value_t tmp2 = JIT_CORE2_L(bp);
                 jit_value_t ba = JIT_INSTR2_L(tmp2, a);
                 jit_value_t bb = JIT_INSTR2_L(tmp2, b);
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, ba), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, bb), &labele);
+                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, ba), &labele);
+                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bb), &labele);
+                jit_insn_branch(function, &labelb);
+                jit_insn_label(function, &labele);
                   jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
                   JIT_PROC2_pos_S(tmp1, ap);
                   jit_value_t next = JIT_PROC2_next_L(tmp1);
                   jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
+                jit_insn_label(function, &labelb);
                 break; }
             }
           }
