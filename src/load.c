@@ -1734,6 +1734,7 @@ void load2(WARRIOR* w, LINE* txt) {
                   JIT_PROC2_pos_S(tmp1, ap);
                   jit_value_t next = JIT_PROC2_next_L(tmp1);
                   jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
                 jit_insn_label(function, &labelb);
                 break; }
             }
