@@ -136,10 +136,13 @@ int self_test() {
     warriors[0].wins = warriors[0].losses = 0;
     battle2_single(1);
     if(w != warriors[0].wins) {
-      puts("Both engines produced different results.");
+      puts("The two simulators produced different results.");
+      if(w) puts("Classic wins, JIT loses.");
+      else puts("JIT wins, classic loses.");
       print_offending_code();
 
       free(warriors);
+      puts("");
       puts("FAILED!");
       return 1;
     }
