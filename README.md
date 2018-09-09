@@ -14,13 +14,16 @@ A fast and feature-rich Memory Array Redcode Simulator for Corewar.
 ### Command line
 
     hmars [options] file1 [-l loadfile] file2 ...
+    hmars --test
     hmars-gui [options] file1 [-l loadfile] file2 ...
+    hmars-gui --test
 
 Option | Description
 ------ | -------------
 `-r rounds` | Set number of rounds to fight.
 `-l loadfile` | Must come after warrior file, specifies optional load file to output.
 `-V` | Increase verbosity by one level, up to 2 levels.
+`--test` | Ignores other options and performs self-test.
 
 ### Debugger
 The debugger is not currently finished. For now, it only displays the ongoing round on a rectangular area.
