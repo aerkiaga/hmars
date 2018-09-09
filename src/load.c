@@ -878,6 +878,8 @@ void load2(WARRIOR* w, LINE* txt) {
         ai_b = b;
       }
 
+      jit_value_t pi_tmp1 = NULL, pi_tmpx = NULL;
+
       if(need_bp) {
         switch(c1[c]._aB) {
           #ifdef A_IMM
@@ -964,14 +966,10 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2 = jit_insn_add(function, b, pc);
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
-            jit_value_t tmp1 = JIT_CORE2_L(bp2_);
-            jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-            jit_value_t bp_ = jit_insn_add(function, tmpa, bp2_);
+            pi_tmp1 = JIT_CORE2_L(bp2_);
+            pi_tmpx = JIT_INSTR2_L(pi_tmp1, a);
+            jit_value_t bp_ = jit_insn_add(function, pi_tmpx, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
-            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpa_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
-            JIT_INSTR2_S(tmp1, a, tmpa_2);
             break; }
           #endif
           #ifdef A_PIB
@@ -979,14 +977,10 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2 = jit_insn_add(function, b, pc);
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
-            jit_value_t tmp1 = JIT_CORE2_L(bp2_);
-            jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-            jit_value_t bp_ = jit_insn_add(function, tmpb, bp2_);
+            pi_tmp1 = JIT_CORE2_L(bp2_);
+            pi_tmpx = JIT_INSTR2_L(pi_tmp1, b);
+            jit_value_t bp_ = jit_insn_add(function, pi_tmpx, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
-            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpb_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
-            JIT_INSTR2_S(tmp1, b, tmpb_2);
             break; }
           #endif
           default:
@@ -1036,12 +1030,8 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_ = jit_insn_add(function, b, pc);
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
-            jit_value_t tmp1 = JIT_CORE2_L(bp_2);
-            jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpa_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
-            JIT_INSTR2_S(tmp1, a, tmpa_2);
+            pi_tmp1 = JIT_CORE2_L(bp_2);
+            pi_tmpx = JIT_INSTR2_L(pi_tmp1, a);
             break; }
           #endif
           #ifdef A_PIB
@@ -1049,12 +1039,8 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_ = jit_insn_add(function, b, pc);
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
-            jit_value_t tmp1 = JIT_CORE2_L(bp_2);
-            jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpb_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
-            JIT_INSTR2_S(tmp1, b, tmpb_2);
+            pi_tmp1 = JIT_CORE2_L(bp_2);
+            pi_tmpx = JIT_INSTR2_L(pi_tmp1, b);
             break; }
           #endif
           default:
@@ -2374,6 +2360,23 @@ void load2(WARRIOR* w, LINE* txt) {
           #endif
           break; }
         #endif
+      }
+
+      switch(c1[c]._aB) { //apply postincrements after execution
+        case A_PIA: {
+            jit_value_t tmpx_ = jit_insn_add(function, pi_tmpx, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpx_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpx_2, tmpx_);
+            JIT_INSTR2_S(pi_tmp1, a, tmpx_2);
+            break;
+          }
+        case A_PIB: {
+            jit_value_t tmpx_ = jit_insn_add(function, pi_tmpx, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpx_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpx_2, tmpx_);
+            JIT_INSTR2_S(pi_tmp1, b, tmpx_2);
+            break;
+          }
       }
 
       if(go_on) { //enqueue next instruction
