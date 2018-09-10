@@ -887,7 +887,7 @@ void load2(WARRIOR* w, LINE* txt) {
           break; }
       }
 
-      jit_value_t b_pi_tmp1 = NULL, b_pi_tmpx = NULL;
+      jit_value_t b_pi_tmp1 = NULL;
 
       if(need_bp) {
         switch(c1[c]._aB) {
@@ -976,8 +976,8 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
             b_pi_tmp1 = JIT_CORE2_L(bp2_);
-            b_pi_tmpx = JIT_INSTR2_L(b_pi_tmp1, a);
-            jit_value_t bp_ = jit_insn_add(function, b_pi_tmpx, bp2_);
+            jit_value_t tmpa = JIT_INSTR2_L(b_pi_tmp1, a);
+            jit_value_t bp_ = jit_insn_add(function, tmpa, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
             break; }
           #endif
@@ -987,8 +987,8 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
             b_pi_tmp1 = JIT_CORE2_L(bp2_);
-            b_pi_tmpx = JIT_INSTR2_L(b_pi_tmp1, b);
-            jit_value_t bp_ = jit_insn_add(function, b_pi_tmpx, bp2_);
+            jit_value_t tmpb = JIT_INSTR2_L(b_pi_tmp1, b);
+            jit_value_t bp_ = jit_insn_add(function, tmpb, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
             break; }
           #endif
@@ -1040,7 +1040,6 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
             b_pi_tmp1 = JIT_CORE2_L(bp_2);
-            b_pi_tmpx = JIT_INSTR2_L(b_pi_tmp1, a);
             break; }
           #endif
           #ifdef A_PIB
@@ -1049,7 +1048,6 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
             b_pi_tmp1 = JIT_CORE2_L(bp_2);
-            b_pi_tmpx = JIT_INSTR2_L(b_pi_tmp1, b);
             break; }
           #endif
           default:
@@ -2373,16 +2371,18 @@ void load2(WARRIOR* w, LINE* txt) {
 
       switch(c1[c]._aB) { //apply postincrements after execution
         case A_PIA: {
-            jit_value_t tmpx_ = jit_insn_add(function, b_pi_tmpx, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpx_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpx_2, tmpx_);
-            JIT_INSTR2_S(b_pi_tmp1, a, tmpx_2);
+            jit_value_t tmpa = JIT_INSTR2_L(b_pi_tmp1, a);
+            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpa_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
+            JIT_INSTR2_S(b_pi_tmp1, a, tmpa_2);
             break; }
         case A_PIB: {
-            jit_value_t tmpx_ = jit_insn_add(function, b_pi_tmpx, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpx_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpx_2, tmpx_);
-            JIT_INSTR2_S(b_pi_tmp1, b, tmpx_2);
+            jit_value_t tmpb = JIT_INSTR2_L(b_pi_tmp1, b);
+            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpb_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
+            JIT_INSTR2_S(b_pi_tmp1, b, tmpb_2);
             break; }
       }
 
