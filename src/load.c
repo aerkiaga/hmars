@@ -1382,7 +1382,8 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_label(function, &labelb);
                 break; }
               case M_F: case M_I: {
-                jit_value_t chkend = JIT_CONST(0, jit_type_sys_int);
+                jit_value_t chkend = jit_value_create(function, jit_type_sys_int);
+                jit_insn_store(function, chkend, JIT_CONST(0, jit_type_sys_int));
                 jit_label_t labele1 = jit_label_undefined;
                 jit_label_t labelb1 = jit_label_undefined;
                 jit_label_t labele2 = jit_label_undefined;
@@ -1411,7 +1412,8 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_label(function, &labelb3);
                 break; }
               case M_X: {
-                jit_value_t chkend = JIT_CONST(0, jit_type_sys_int);
+                jit_value_t chkend = jit_value_create(function, jit_type_sys_int);
+                jit_insn_store(function, chkend, JIT_CONST(0, jit_type_sys_int));
                 jit_label_t labele1 = jit_label_undefined;
                 jit_label_t labelb1 = jit_label_undefined;
                 jit_label_t labele2 = jit_label_undefined;
@@ -1498,7 +1500,8 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_label(function, &labelb);
                 break; }
               case M_F: case M_I: {
-                jit_value_t chkend = JIT_CONST(0, jit_type_sys_int);
+                jit_value_t chkend = jit_value_create(function, jit_type_sys_int);
+                jit_insn_store(function, chkend, JIT_CONST(0, jit_type_sys_int));
                 jit_label_t labele1 = jit_label_undefined;
                 jit_label_t labelb1 = jit_label_undefined;
                 jit_label_t labele2 = jit_label_undefined;
@@ -1527,7 +1530,8 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_label(function, &labelb3);
                 break; }
               case M_X: {
-                jit_value_t chkend = JIT_CONST(0, jit_type_sys_int);
+                jit_value_t chkend = jit_value_create(function, jit_type_sys_int);
+                jit_insn_store(function, chkend, JIT_CONST(0, jit_type_sys_int));
                 jit_label_t labele1 = jit_label_undefined;
                 jit_label_t labelb1 = jit_label_undefined;
                 jit_label_t labele2 = jit_label_undefined;
