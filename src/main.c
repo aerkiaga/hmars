@@ -116,6 +116,13 @@ int self_test() {
   signal(SIGILL, test_crash_handler);
   signal(SIGFPE, test_crash_handler);
 
+  #if PSPACESIZE
+  warriors[0].pspace = malloc(PSPACESIZE * sizeof(pcell_t));
+  #endif
+  #ifdef TSAFE_CORE
+  minit(warriors[0].mutex);
+  #endif
+
   int n;
   int wins = 0;
   for(n = 0; n < 1000; ++n) {
@@ -123,17 +130,14 @@ int self_test() {
     test_crash_loaded = 1;
     load2(&warriors[0], loadt);
 
-    #if PSPACESIZE
-    warriors[0].pspace = calloc(PSPACESIZE, sizeof(pcell_t));
-    #endif
-    #ifdef TSAFE_CORE
-    minit(warriors[0].mutex);
-    #endif
-
     int w;
+    memset(warriors[0].pspace, 0, PSPACESIZE * sizeof(pcell_t));
+    warriors[0].psp0 = CORESIZE - 1;
     battle1_single(1);
     w = warriors[0].wins;
     warriors[0].wins = warriors[0].losses = 0;
+    memset(warriors[0].pspace, 0, PSPACESIZE * sizeof(pcell_t));
+    warriors[0].psp0 = CORESIZE - 1;
     battle2_single(1);
     if(w != warriors[0].wins) {
       puts("The two simulators produced different results.");
@@ -152,15 +156,16 @@ int self_test() {
     warriors[0].code1 = NULL;
     free(warriors[0].code2);
     warriors[0].code2 = NULL;
-
-    #if PSPACESIZE
-    free(warriors[0].pspace);
-    warriors[0].pspace = NULL;
-    #endif
-    #ifdef TSAFE_CORE
-    mdestroy(warriors[0].mutex);
-    #endif
   }
+
+  #if PSPACESIZE
+  free(warriors[0].pspace);
+  warriors[0].pspace = NULL;
+  #endif
+  #ifdef TSAFE_CORE
+  mdestroy(warriors[0].mutex);
+  #endif
+
   printf("wins: %d / 1000\n", wins);
   puts("PASSED!");
 
