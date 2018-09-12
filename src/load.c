@@ -513,43 +513,43 @@ void load2(WARRIOR* w, LINE* txt) {
 
       jit_value_t w_addr = JIT_W_ADDR();
 
-      int need_ap = 0, need_ai = 0, need_bp = 0, go_on = 0; //needs a- and b-pointers, can continue on next instruction
-      switch(c1[c]._O) {
+      int need_ap = 0, need_ai = 0, need_bp = 0, need_bi = 0, go_on = 0; //needs a- and b-pointers, can continue on next instruction
+      switch(c1[c]._O) { //need_*, go_on
         #ifdef O_DAT
-        case O_DAT: need_ap = need_ai = need_bp = go_on = 0; break;
+        case O_DAT: need_ap = need_ai = need_bp = need_bi = go_on = 0; break;
         #endif
         #ifdef O_MOV
-        case O_MOV: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_MOV: need_ap = need_ai = need_bp = go_on = 1; need_bi = 0; break;
         #endif
         #ifdef O_ADD
-        case O_ADD: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_ADD: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_SUB
-        case O_SUB: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_SUB: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_MUL
-        case O_MUL: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_MUL: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_DIV
-        case O_DIV: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_DIV: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_MOD
-        case O_MOD: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_MOD: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_JMP
-        case O_JMP: need_ap = 1; need_bp = need_ai = go_on = 0; break;
+        case O_JMP: need_ap = 1; need_bp = need_ai = need_bi = go_on = 0; break;
         #endif
         #ifdef O_JMZ
-        case O_JMZ: need_ap = need_bp = go_on = 1; need_ai = 0; break;
+        case O_JMZ: need_ap = need_bp = need_bi = go_on = 1; need_ai = 0; break;
         #endif
         #ifdef O_JMN
-        case O_JMN: need_ap = need_bp = go_on = 1; need_ai = 0; break;
+        case O_JMN: need_ap = need_bp = need_bi = go_on = 1; need_ai = 0; break;
         #endif
         #ifdef O_DJZ
-        case O_DJZ: need_ap = need_bp = 1; go_on = need_ai = 0; break;
+        case O_DJZ: need_ap = need_bp = need_bi = 1; go_on = need_ai = 0; break;
         #endif
         #ifdef O_DJN
-        case O_DJN: need_ap = need_bp = 1; go_on = need_ai = 0; break;
+        case O_DJN: need_ap = need_bp = need_bi = 1; go_on = need_ai = 0; break;
         #endif
         #if defined(O_CMP) || defined(O_SEQ)
         #ifdef O_CMP
@@ -557,34 +557,37 @@ void load2(WARRIOR* w, LINE* txt) {
         #else
         case O_SEQ:
         #endif
-          need_ap = need_ai = need_bp = 1; go_on = 0; break;
+          need_ap = need_ai = need_bp = need_bi = 1; go_on = 0; break;
         #endif
         #ifdef O_SNE
-        case O_SNE: need_ap = need_ai = need_bp = 1; go_on = 0; break;
+        case O_SNE: need_ap = need_ai = need_bp = need_bi = 1; go_on = 0; break;
         #endif
         #ifdef O_SLT
-        case O_SLT: need_ap = need_ai = need_bp = 1; go_on = 0; break;
+        case O_SLT: need_ap = need_ai = need_bp = need_bi = 1; go_on = 0; break;
         #endif
         #ifdef O_SPL
-        case O_SPL: need_ap = go_on = 1; need_bp = need_ai = 0; break;
+        case O_SPL: need_ap = go_on = 1; need_bp = need_ai = need_bi = 0; break;
         #endif
         #ifdef O_NOP
-        case O_NOP: need_ap = need_ai = need_bp = 0; go_on = 1; break;
+        case O_NOP: need_ap = need_ai = need_bp = need_bi = 0; go_on = 1; break;
         #endif
         #ifdef O_LDP
-        case O_LDP: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_LDP: need_ap = need_ai = need_bp = go_on = 1; need_bi = 0; break;
         #endif
         #ifdef O_STP
-        case O_STP: need_ap = need_ai = need_bp = go_on = 1; break;
+        case O_STP: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
-        #ifdef O_XCH
-        case O_XCH: need_ap = need_ai = need_bp = go_on = 1; break;
+        #ifdef EXT_XCH_a
+        case O_XCH: need_ap = need_ai = go_on = 1; need_bp = need_bi = 0; break;
+        #endif
+        #ifdef EXT_XCH_b
+        case O_XCH: need_ap = need_ai = need_bp = need_bi = go_on = 1; break;
         #endif
         #ifdef O_PCT
-        case O_PCT: need_ap = go_on = 1; need_bp = need_ai = 0; break;
+        case O_PCT: need_ap = go_on = 1; need_bp = need_ai = need_bi = 0; break;
         #endif
         #ifdef O_STS
-        case O_STS: need_ap = need_ai = go_on = 1; need_bp = 0; break;
+        case O_STS: need_ap = need_ai = go_on = 1; need_bp = need_bi = 0; break;
         #endif
         default:
           error("Unknown opcode found by JIT-compiler: %d", c1[c]._O);
@@ -772,18 +775,13 @@ void load2(WARRIOR* w, LINE* txt) {
         }
       }
 
-      int a_imm = 0, b_imm = 0;
+      int a_imm = 0;
       /* no matter if they are actually immediate,
       if the other is pre-/post-/auto-something,
       we can't use immediate optimization*/
       if(c1[c]._aA == A_IMM) {
         switch(c1[c]._aB) {
           case A_IMM: case A_DIR: case A_INA: case A_INB: a_imm = 1;
-        }
-      }
-      if(c1[c]._aB == A_IMM) {
-        switch(c1[c]._aA) {
-          case A_IMM: case A_DIR: case A_INA: case A_INB: b_imm = 1;
         }
       }
       if(a_imm) need_ai = 0; //if we use a and b, we don't need ai_a and ai_b
@@ -887,8 +885,6 @@ void load2(WARRIOR* w, LINE* txt) {
           break; }
       }
 
-      jit_value_t b_pi_tmp1 = NULL;
-
       if(need_bp) {
         switch(c1[c]._aB) {
           #ifdef A_IMM
@@ -975,10 +971,15 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2 = jit_insn_add(function, b, pc);
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
-            b_pi_tmp1 = JIT_CORE2_L(bp2_);
-            jit_value_t tmpa = JIT_INSTR2_L(b_pi_tmp1, a);
+            jit_value_t tmp1 = JIT_CORE2_L(bp2_);
+            jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
             jit_value_t bp_ = jit_insn_add(function, tmpa, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
+
+            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpa_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
+            JIT_INSTR2_S(tmp1, a, tmpa_2);
             break; }
           #endif
           #ifdef A_PIB
@@ -986,10 +987,15 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp2 = jit_insn_add(function, b, pc);
             jit_value_t bp2_;
             BOUND_CORESIZE_HIGH_JIT(bp2_, bp2);
-            b_pi_tmp1 = JIT_CORE2_L(bp2_);
-            jit_value_t tmpb = JIT_INSTR2_L(b_pi_tmp1, b);
+            jit_value_t tmp1 = JIT_CORE2_L(bp2_);
+            jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
             jit_value_t bp_ = jit_insn_add(function, tmpb, bp2_);
             BOUND_CORESIZE_HIGH_JIT(bp, bp_);
+
+            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpb_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
+            JIT_INSTR2_S(tmp1, b, tmpb_2);
             break; }
           #endif
           default:
@@ -1039,7 +1045,13 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_ = jit_insn_add(function, b, pc);
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
-            b_pi_tmp1 = JIT_CORE2_L(bp_2);
+            jit_value_t tmp1 = JIT_CORE2_L(bp_2);
+            jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
+
+            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpa_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
+            JIT_INSTR2_S(tmp1, a, tmpa_2);
             break; }
           #endif
           #ifdef A_PIB
@@ -1047,10 +1059,108 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_ = jit_insn_add(function, b, pc);
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
-            b_pi_tmp1 = JIT_CORE2_L(bp_2);
+            jit_value_t tmp1 = JIT_CORE2_L(bp_2);
+            jit_value_t tmpb = JIT_INSTR2_L(tmp1, a);
+
+            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+            jit_value_t tmpb_2;
+            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
+            JIT_INSTR2_S(tmp1, b, tmpb_2);
             break; }
           #endif
           default:
+            break;
+        }
+      }
+
+      jit_value_t bi_a = NULL, bi_b = NULL;
+      if(need_bi) {
+        jit_value_t tmp1 = JIT_CORE2_L(bp);
+        switch(c1[c]._O) {
+          #ifdef O_MOV
+          case O_MOV:
+          #endif
+          #ifdef O_ADD
+          case O_ADD:
+          #endif
+          #ifdef O_SUB
+          case O_SUB:
+          #endif
+          #ifdef O_MUL
+          case O_MUL:
+          #endif
+          #ifdef O_DIV
+          case O_DIV:
+          #endif
+          #ifdef O_MOD
+          case O_MOD:
+          #endif
+          #ifdef O_JMZ
+          case O_JMZ:
+          #endif
+          #ifdef O_JMN
+          case O_JMN:
+          #endif
+          #ifdef O_DJZ
+          case O_DJZ:
+          #endif
+          #ifdef O_DJN
+          case O_DJN:
+          #endif
+          #if defined(O_CMP) || defined(O_SEQ)
+          #ifdef O_CMP
+          case O_CMP:
+          #else
+          case O_SEQ:
+          #endif
+          #endif
+          #ifdef O_SNE
+          case O_SNE:
+          #endif
+          #ifdef O_SLT
+          case O_SLT:
+          #endif
+          #ifdef EXT_XCH_b
+          case O_XCH:
+          #endif
+          #ifdef O_STS
+          case O_STS:
+          #endif
+            switch(c1[c]._M) {
+              case M_A: case M_BA: {
+                bi_a = JIT_INSTR2_L(tmp1, a);
+                break; }
+              case M_B: case M_AB: {
+                bi_b = JIT_INSTR2_L(tmp1, b);
+                break; }
+              case M_F: case M_X: case M_I: {
+                bi_a = JIT_INSTR2_L(tmp1, a);
+                bi_b = JIT_INSTR2_L(tmp1, b);
+                break; }
+            }
+            break;
+
+          #ifdef O_LDP
+          case O_LDP:
+          #endif
+          #ifdef O_STP
+          case O_STP:
+          #endif
+            switch(c1[c]._M) {
+              case M_A: case M_BA: {
+                bi_a = JIT_INSTR2_L(tmp1, a);
+                break; }
+              case M_B: case M_AB: case M_F: case M_X: case M_I: {
+                bi_b = JIT_INSTR2_L(tmp1, b);
+                break; }
+            }
+            break;
+
+          #ifdef EXT_XCH_a
+          case O_XCH:
+          #endif
+            bi_a = JIT_INSTR2_L(tmp1, a);
+            bi_b = JIT_INSTR2_L(tmp1, b);
             break;
         }
       }
@@ -1133,8 +1243,7 @@ void load2(WARRIOR* w, LINE* txt) {
           switch(c1[c]._M) {
             case M_A: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpa_ = jit_insn_add(function, tmpa, ai_a);
+              jit_value_t tmpa_ = jit_insn_add(function, bi_a, ai_a);
               jit_value_t tmpa_2;
               BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1142,8 +1251,7 @@ void load2(WARRIOR* w, LINE* txt) {
             }
             case M_B: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpb_ = jit_insn_add(function, tmpb, ai_b);
+              jit_value_t tmpb_ = jit_insn_add(function, bi_b, ai_b);
               jit_value_t tmpb_2;
               BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1151,8 +1259,7 @@ void load2(WARRIOR* w, LINE* txt) {
             }
             case M_AB: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpb_ = jit_insn_add(function, tmpb, ai_a);
+              jit_value_t tmpb_ = jit_insn_add(function, bi_b, ai_a);
               jit_value_t tmpb_2;
               BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1160,8 +1267,7 @@ void load2(WARRIOR* w, LINE* txt) {
             }
             case M_BA: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpa_ = jit_insn_add(function, tmpa, ai_b);
+              jit_value_t tmpa_ = jit_insn_add(function, bi_a, ai_b);
               jit_value_t tmpa_2;
               BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1169,10 +1275,8 @@ void load2(WARRIOR* w, LINE* txt) {
             }
             case M_I: case M_F: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpa_ = jit_insn_add(function, tmpa, ai_a);
-              jit_value_t tmpb_ = jit_insn_add(function, tmpb, ai_b);
+              jit_value_t tmpa_ = jit_insn_add(function, bi_a, ai_a);
+              jit_value_t tmpb_ = jit_insn_add(function, bi_b, ai_b);
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
@@ -1182,10 +1286,8 @@ void load2(WARRIOR* w, LINE* txt) {
             }
             case M_X: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpa_ = jit_insn_add(function, tmpa, ai_b);
-              jit_value_t tmpb_ = jit_insn_add(function, tmpb, ai_a);
+              jit_value_t tmpa_ = jit_insn_add(function, bi_a, ai_b);
+              jit_value_t tmpb_ = jit_insn_add(function, bi_b, ai_a);
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
@@ -1201,8 +1303,7 @@ void load2(WARRIOR* w, LINE* txt) {
           switch(c1[c]._M) {
               case M_A: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpa_ = jit_insn_sub(function, tmpa, ai_a);
+                jit_value_t tmpa_ = jit_insn_sub(function, bi_a, ai_a);
                 jit_value_t tmpa_2;
                 BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1210,8 +1311,7 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_B: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpb_ = jit_insn_sub(function, tmpb, ai_b);
+                jit_value_t tmpb_ = jit_insn_sub(function, bi_b, ai_b);
                 jit_value_t tmpb_2;
                 BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
                 JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1219,8 +1319,7 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_AB: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpb_ = jit_insn_sub(function, tmpb, ai_a);
+                jit_value_t tmpb_ = jit_insn_sub(function, bi_b, ai_a);
                 jit_value_t tmpb_2;
                 BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
                 JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1228,8 +1327,7 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_BA: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpa_ = jit_insn_sub(function, tmpa, ai_b);
+                jit_value_t tmpa_ = jit_insn_sub(function, bi_a, ai_b);
                 jit_value_t tmpa_2;
                 BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1237,10 +1335,8 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_I: case M_F: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpa_ = jit_insn_sub(function, tmpa, ai_a);
-                jit_value_t tmpb_ = jit_insn_sub(function, tmpb, ai_b);
+                jit_value_t tmpa_ = jit_insn_sub(function, bi_a, ai_a);
+                jit_value_t tmpb_ = jit_insn_sub(function, bi_b, ai_b);
                 jit_value_t tmpa_2, tmpb_2;
                 BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
                 BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
@@ -1250,10 +1346,8 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_X: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpa_ = jit_insn_sub(function, tmpa, ai_b);
-                jit_value_t tmpb_ = jit_insn_sub(function, tmpb, ai_a);
+                jit_value_t tmpa_ = jit_insn_sub(function, bi_a, ai_b);
+                jit_value_t tmpb_ = jit_insn_sub(function, bi_b, ai_a);
                 jit_value_t tmpa_2, tmpb_2;
                 BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
                 BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
@@ -1269,42 +1363,36 @@ void load2(WARRIOR* w, LINE* txt) {
           switch(c1[c]._M) {
               case M_A: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpa_ = jit_insn_mul(function, ai_a, tmpa);
+                jit_value_t tmpa_ = jit_insn_mul(function, ai_a, bi_a);
                 jit_value_t tmpa_2 = jit_insn_rem(function, tmpa_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
                 break;
               }
               case M_B: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpb_ = jit_insn_mul(function, ai_b, tmpb);
+                jit_value_t tmpb_ = jit_insn_mul(function, ai_b, bi_b);
                 jit_value_t tmpb_2 = jit_insn_rem(function, tmpb_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, b, tmpb_2);
                 break;
               }
               case M_AB: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpb_ = jit_insn_mul(function, ai_a, tmpb);
+                jit_value_t tmpb_ = jit_insn_mul(function, ai_a, bi_b);
                 jit_value_t tmpb_2 = jit_insn_rem(function, tmpb_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, b, tmpb_2);
                 break;
               }
               case M_BA: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpa_ = jit_insn_mul(function, ai_b, tmpa);
+                jit_value_t tmpa_ = jit_insn_mul(function, ai_b, bi_a);
                 jit_value_t tmpa_2 = jit_insn_rem(function, tmpa_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
                 break;
               }
               case M_F: case M_I: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpa_ = jit_insn_mul(function, ai_a, tmpa);
-                jit_value_t tmpb_ = jit_insn_mul(function, ai_b, tmpb);
+                jit_value_t tmpa_ = jit_insn_mul(function, ai_a, bi_a);
+                jit_value_t tmpb_ = jit_insn_mul(function, ai_b, bi_b);
                 jit_value_t tmpa_2 = jit_insn_rem(function, tmpa_, JIT_CONST(CORESIZE, jit_type_addr2));
                 jit_value_t tmpb_2 = jit_insn_rem(function, tmpb_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1313,10 +1401,8 @@ void load2(WARRIOR* w, LINE* txt) {
               }
               case M_X: {
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
-                jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                jit_value_t tmpa_ = jit_insn_mul(function, ai_b, tmpa);
-                jit_value_t tmpb_ = jit_insn_mul(function, ai_a, tmpb);
+                jit_value_t tmpa_ = jit_insn_mul(function, ai_b, bi_a);
+                jit_value_t tmpb_ = jit_insn_mul(function, ai_a, bi_b);
                 jit_value_t tmpa_2 = jit_insn_rem(function, tmpa_, JIT_CONST(CORESIZE, jit_type_addr2));
                 jit_value_t tmpb_2 = jit_insn_rem(function, tmpb_, JIT_CONST(CORESIZE, jit_type_addr2));
                 JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1334,8 +1420,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_div(function, tmpa, ai_a);
+                  jit_value_t tmpa_ = jit_insn_div(function, bi_a, ai_a);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1347,8 +1432,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_div(function, tmpb, ai_b);
+                  jit_value_t tmpb_ = jit_insn_div(function, bi_b, ai_b);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1360,8 +1444,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_div(function, tmpb, ai_a);
+                  jit_value_t tmpb_ = jit_insn_div(function, bi_b, ai_a);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1373,8 +1456,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_div(function, tmpa, ai_b);
+                  jit_value_t tmpa_ = jit_insn_div(function, bi_a, ai_b);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1391,16 +1473,14 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb3 = jit_label_undefined;
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele1);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_div(function, tmpb, ai_b);
+                  jit_value_t tmpb_ = jit_insn_div(function, bi_b, ai_b);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb1);
                 jit_insn_label(function, &labele1);
                   jit_insn_store(function, chkend, JIT_CONST(1, jit_type_sys_int));
                 jit_insn_label(function, &labelb1);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele2);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_div(function, tmpa, ai_a);
+                  jit_value_t tmpa_ = jit_insn_div(function, bi_a, ai_a);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb2);
                 jit_insn_label(function, &labele2);
@@ -1421,16 +1501,14 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb3 = jit_label_undefined;
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele1);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_div(function, tmpa, ai_b);
+                  jit_value_t tmpa_ = jit_insn_div(function, bi_a, ai_b);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb1);
                 jit_insn_label(function, &labele1);
                   jit_insn_store(function, chkend, JIT_CONST(1, jit_type_sys_int));
                 jit_insn_label(function, &labelb1);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele2);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_div(function, tmpb, ai_a);
+                  jit_value_t tmpb_ = jit_insn_div(function, bi_b, ai_a);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb2);
                 jit_insn_label(function, &labele2);
@@ -1452,8 +1530,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_rem(function, tmpa, ai_a);
+                  jit_value_t tmpa_ = jit_insn_rem(function, bi_a, ai_a);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1465,8 +1542,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_rem(function, tmpb, ai_b);
+                  jit_value_t tmpb_ = jit_insn_rem(function, bi_b, ai_b);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1478,8 +1554,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_rem(function, tmpb, ai_a);
+                  jit_value_t tmpb_ = jit_insn_rem(function, bi_b, ai_a);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1491,8 +1566,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb = jit_label_undefined;
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele);
                   jit_value_t tmp1 = JIT_CORE2_L(bp);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_rem(function, tmpa, ai_b);
+                  jit_value_t tmpa_ = jit_insn_rem(function, bi_a, ai_b);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb);
                 jit_insn_label(function, &labele);
@@ -1509,16 +1583,14 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb3 = jit_label_undefined;
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele1);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_rem(function, tmpb, ai_b);
+                  jit_value_t tmpb_ = jit_insn_rem(function, bi_b, ai_b);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb1);
                 jit_insn_label(function, &labele1);
                   jit_insn_store(function, chkend, JIT_CONST(1, jit_type_sys_int));
                 jit_insn_label(function, &labelb1);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele2);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_rem(function, tmpa, ai_a);
+                  jit_value_t tmpa_ = jit_insn_rem(function, bi_a, ai_a);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb2);
                 jit_insn_label(function, &labele2);
@@ -1539,16 +1611,14 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_label_t labelb3 = jit_label_undefined;
                 jit_value_t tmp1 = JIT_CORE2_L(bp);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_b), &labele1);
-                  jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-                  jit_value_t tmpa_ = jit_insn_rem(function, tmpa, ai_b);
+                  jit_value_t tmpa_ = jit_insn_rem(function, bi_a, ai_b);
                   JIT_INSTR2_S(tmp1, a, tmpa_);
                 jit_insn_branch(function, &labelb1);
                 jit_insn_label(function, &labele1);
                   jit_insn_store(function, chkend, JIT_CONST(1, jit_type_sys_int));
                 jit_insn_label(function, &labelb1);
                 jit_insn_branch_if_not(function, jit_insn_to_bool(function, ai_a), &labele2);
-                  jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-                  jit_value_t tmpb_ = jit_insn_rem(function, tmpb, ai_a);
+                  jit_value_t tmpb_ = jit_insn_rem(function, bi_b, ai_a);
                   JIT_INSTR2_S(tmp1, b, tmpb_);
                 jit_insn_branch(function, &labelb2);
                 jit_insn_label(function, &labele2);
@@ -1572,169 +1642,78 @@ void load2(WARRIOR* w, LINE* txt) {
         #endif
         #ifdef O_JMZ
         case O_JMZ:
-          if(b_imm) {
-            switch(c1[c]._M) {
-              case M_A: case M_BA: {
-                jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, a), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_B: case M_AB: {
-                jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, b), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_F: case M_I: case M_X: {
-                jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, a), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, b), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-            }
-          }
-          else {
-            switch(c1[c]._M) {
-              case M_A: case M_BA: {
-                jit_label_t labele = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t ba = JIT_INSTR2_L(tmp2, a);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, ba), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_B: case M_AB: {
-                jit_label_t labele = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t bb = JIT_INSTR2_L(tmp2, b);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bb), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_F: case M_I: case M_X: {
-                jit_label_t labele = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t ba = JIT_INSTR2_L(tmp2, a);
-                jit_value_t bb = JIT_INSTR2_L(tmp2, b);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, ba), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bb), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-            }
+          switch(c1[c]._M) {
+            case M_A: case M_BA: {
+              jit_label_t labele = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_a), &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labele);
+              break; }
+            case M_B: case M_AB: {
+              jit_label_t labele = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_b), &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labele);
+              break; }
+            case M_F: case M_I: case M_X: {
+              jit_label_t labele = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_a), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_b), &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labele);
+              break; }
           }
           break;
         #endif
         #ifdef O_JMN
         case O_JMN:
-          if(b_imm) {
-            switch(c1[c]._M) {
-              case M_A: case M_BA: {
-                jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, a), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_B: case M_AB: {
-                jit_label_t labele = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, b), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_F: case M_I: case M_X: {
-                jit_label_t labele = jit_label_undefined;
-                jit_label_t labelb = jit_label_undefined;
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, a), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, b), &labele);
-                jit_insn_branch(function, &labelb);
-                jit_insn_label(function, &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labelb);
-                break; }
-            }
-          }
-          else {
-            switch(c1[c]._M) {
-              case M_A: case M_BA: {
-                jit_label_t labele = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t ba = JIT_INSTR2_L(tmp2, a);
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, ba), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_B: case M_AB: {
-                jit_label_t labele = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t bb = JIT_INSTR2_L(tmp2, b);
-                jit_insn_branch_if_not(function, jit_insn_to_bool(function, bb), &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labele);
-                break; }
-              case M_F: case M_I: case M_X: {
-                jit_label_t labele = jit_label_undefined;
-                jit_label_t labelb = jit_label_undefined;
-                jit_value_t tmp2 = JIT_CORE2_L(bp);
-                jit_value_t ba = JIT_INSTR2_L(tmp2, a);
-                jit_value_t bb = JIT_INSTR2_L(tmp2, b);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, ba), &labele);
-                jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bb), &labele);
-                jit_insn_branch(function, &labelb);
-                jit_insn_label(function, &labele);
-                  jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
-                  JIT_PROC2_pos_S(tmp1, ap);
-                  jit_value_t next = JIT_PROC2_next_L(tmp1);
-                  jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-                jit_insn_label(function, &labelb);
-                break; }
-            }
+          switch(c1[c]._M) {
+            case M_A: case M_BA: {
+              jit_label_t labele = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_bool(function, bi_a), &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labele);
+              break; }
+            case M_B: case M_AB: {
+              jit_label_t labele = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_bool(function, bi_b), &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labele);
+              break; }
+            case M_F: case M_I: case M_X: {
+              jit_label_t labele = jit_label_undefined;
+              jit_label_t labelb = jit_label_undefined;
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_a), &labele);
+              jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, bi_b), &labele);
+              jit_insn_branch(function, &labelb);
+              jit_insn_label(function, &labele);
+                jit_value_t tmp1 = JIT_LPROC2_L(JIT_W());
+                JIT_PROC2_pos_S(tmp1, ap);
+                jit_value_t next = JIT_PROC2_next_L(tmp1);
+                jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+                jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
+              jit_insn_label(function, &labelb);
+              break; }
           }
           break;
         #endif
@@ -1745,8 +1724,7 @@ void load2(WARRIOR* w, LINE* txt) {
           switch(c1[c]._M) {
             case M_A: case M_BA: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpa_ = jit_insn_sub(function, tmpa, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1754,8 +1732,7 @@ void load2(WARRIOR* w, LINE* txt) {
               break; }
             case M_B: case M_AB: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpb_ = jit_insn_sub(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1763,10 +1740,8 @@ void load2(WARRIOR* w, LINE* txt) {
               break; }
             case M_F: case M_X: case M_I:  {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpa_ = jit_insn_sub(function, tmpa, JIT_CONST(1, jit_type_addr2s));
-              jit_value_t tmpb_ = jit_insn_sub(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
@@ -1796,8 +1771,7 @@ void load2(WARRIOR* w, LINE* txt) {
           switch(c1[c]._M) {
             case M_A: case M_BA: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpa_ = jit_insn_sub(function, tmpa, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               JIT_INSTR2_S(tmp1, a, tmpa_2);
@@ -1805,8 +1779,7 @@ void load2(WARRIOR* w, LINE* txt) {
               break; }
             case M_B: case M_AB: {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpb_ = jit_insn_sub(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
               JIT_INSTR2_S(tmp1, b, tmpb_2);
@@ -1814,10 +1787,8 @@ void load2(WARRIOR* w, LINE* txt) {
               break; }
             case M_F: case M_X: case M_I:  {
               jit_value_t tmp1 = JIT_CORE2_L(bp);
-              jit_value_t tmpa = JIT_INSTR2_L(tmp1, a);
-              jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
-              jit_value_t tmpa_ = jit_insn_sub(function, tmpa, JIT_CONST(1, jit_type_addr2s));
-              jit_value_t tmpb_ = jit_insn_sub(function, tmpb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
@@ -1860,51 +1831,45 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
               jit_value_t bi = JIT_INSTR2_fn_L(tmpb);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ai, bi), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_A: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               break; }
             case M_B: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_AB: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, bb), &labele);
               break; }
             case M_BA: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, ba), &labele);
               break; }
             case M_F: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_X: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, bb), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, ba), &labele);
               break; }
@@ -1937,51 +1902,45 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
               jit_value_t bi = JIT_INSTR2_fn_L(tmpb);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ai, bi), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_A: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               break; }
             case M_B: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_AB: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, bb), &labele);
               break; }
             case M_BA: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, ba), &labele);
               break; }
             case M_F: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, ba), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, bb), &labele);
               break; }
             case M_X: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_eq(function, aa, bb), &labele);
               jit_insn_branch_if_not(function, jit_insn_eq(function, ab, ba), &labele);
               break; }
@@ -2008,44 +1967,38 @@ void load2(WARRIOR* w, LINE* txt) {
           jit_value_t pos_ = jit_value_create(function, jit_type_addr2s);
           switch(c1[c]._M) {
             case M_A: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_lt(function, aa, ba), &labele);
               break; }
             case M_B: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_lt(function, ab, bb), &labele);
               break; }
             case M_AB: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_lt(function, aa, bb), &labele);
               break; }
             case M_BA: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
+              jit_value_t ba = bi_a;
               jit_insn_branch_if_not(function, jit_insn_lt(function, ab, ba), &labele);
               break; }
             case M_F: case M_I: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_lt(function, aa, ba), &labele);
               jit_insn_branch_if_not(function, jit_insn_lt(function, ab, bb), &labele);
               break; }
             case M_X: {
-              jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t aa = ai_a;
               jit_value_t ab = ai_b;
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
+              jit_value_t ba = bi_a;
+              jit_value_t bb = bi_b;
               jit_insn_branch_if_not(function, jit_insn_lt(function, aa, bb), &labele);
               jit_insn_branch_if_not(function, jit_insn_lt(function, ab, ba), &labele);
               break; }
@@ -2196,8 +2149,7 @@ void load2(WARRIOR* w, LINE* txt) {
           #endif
           switch(c1[c]._M) {
             case M_A: {
-              jit_value_t tmp2 = JIT_CORE2_L(bp);
-              jit_value_t tmpx = JIT_INSTR2_L(tmp2, a);
+              jit_value_t tmpx = bi_a;
               jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
               jit_label_t labelb2 = jit_label_undefined;
               jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
@@ -2208,8 +2160,7 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_insn_label(function, &labelb2);
               break; }
             case M_B: case M_I: case M_F: case M_X: {
-              jit_value_t tmp2 = JIT_CORE2_L(bp);
-              jit_value_t tmpx = JIT_INSTR2_L(tmp2, b);
+              jit_value_t tmpx = bi_b;
               jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
               jit_label_t labelb2 = jit_label_undefined;
               jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
@@ -2220,8 +2171,7 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_insn_label(function, &labelb2);
               break; }
             case M_AB: {
-              jit_value_t tmp2 = JIT_CORE2_L(bp);
-              jit_value_t tmpx = JIT_INSTR2_L(tmp2, b);
+              jit_value_t tmpx = bi_b;
               jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
               jit_label_t labelb2 = jit_label_undefined;
               jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
@@ -2232,8 +2182,7 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_insn_label(function, &labelb2);
               break; }
             case M_BA: {
-              jit_value_t tmp2 = JIT_CORE2_L(bp);
-              jit_value_t tmpx = JIT_INSTR2_L(tmp2, a);
+              jit_value_t tmpx = bi_a;
               jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
               jit_label_t labelb2 = jit_label_undefined;
               jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
@@ -2259,11 +2208,9 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpb = JIT_CORE2_L(bp);
               jit_value_t ai = JIT_INSTR2_fn_L(tmpa);
               jit_value_t bi = JIT_INSTR2_fn_L(tmpb);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
               JIT_INSTR2_S(tmpa, fn, bi);
-              JIT_INSTR2_S(tmpa, a, ba);
-              JIT_INSTR2_S(tmpa, b, bb);
+              JIT_INSTR2_S(tmpa, a, bi_a);
+              JIT_INSTR2_S(tmpa, b, bi_b);
               JIT_INSTR2_S(tmpb, fn, ai);
               JIT_INSTR2_S(tmpb, a, ai_a);
               JIT_INSTR2_S(tmpb, b, ai_b);
@@ -2271,48 +2218,40 @@ void load2(WARRIOR* w, LINE* txt) {
             case M_A: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              JIT_INSTR2_S(tmpa, a, ba);
+              JIT_INSTR2_S(tmpa, a, bi_a);
               JIT_INSTR2_S(tmpb, a, ai_a);
               break; }
             case M_B: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
-              JIT_INSTR2_S(tmpa, b, bb);
+              JIT_INSTR2_S(tmpa, b, bi_b);
               JIT_INSTR2_S(tmpb, b, ai_b);
               break; }
             case M_AB: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
-              JIT_INSTR2_S(tmpa, a, bb);
+              JIT_INSTR2_S(tmpa, a, bi_b);
               JIT_INSTR2_S(tmpb, b, ai_a);
               break; }
             case M_BA: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              JIT_INSTR2_S(tmpa, b, ba);
+              JIT_INSTR2_S(tmpa, b, bi_a);
               JIT_INSTR2_S(tmpb, a, ai_b);
               break; }
             case M_F: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
-              JIT_INSTR2_S(tmpa, a, ba);
-              JIT_INSTR2_S(tmpa, b, bb);
+              JIT_INSTR2_S(tmpa, a, bi_a);
+              JIT_INSTR2_S(tmpa, b, bi_b);
               JIT_INSTR2_S(tmpb, a, ai_a);
               JIT_INSTR2_S(tmpb, b, ai_b);
               break; }
             case M_X: {
               jit_value_t tmpa = JIT_CORE2_L(ap);
               jit_value_t tmpb = JIT_CORE2_L(bp);
-              jit_value_t ba = JIT_INSTR2_L(tmpb, a);
-              jit_value_t bb = JIT_INSTR2_L(tmpb, b);
-              JIT_INSTR2_S(tmpa, b, ba);
-              JIT_INSTR2_S(tmpa, a, bb);
+              JIT_INSTR2_S(tmpa, b, bi_a);
+              JIT_INSTR2_S(tmpa, a, bi_b);
               JIT_INSTR2_S(tmpb, b, ai_a);
               JIT_INSTR2_S(tmpb, a, ai_b);
               break; }
@@ -2371,23 +2310,6 @@ void load2(WARRIOR* w, LINE* txt) {
           #endif
           break; }
         #endif
-      }
-
-      switch(c1[c]._aB) { //apply postincrements after execution
-        case A_PIA: {
-            jit_value_t tmpa = JIT_INSTR2_L(b_pi_tmp1, a);
-            jit_value_t tmpa_ = jit_insn_add(function, tmpa, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpa_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpa_2, tmpa_);
-            JIT_INSTR2_S(b_pi_tmp1, a, tmpa_2);
-            break; }
-        case A_PIB: {
-            jit_value_t tmpb = JIT_INSTR2_L(b_pi_tmp1, b);
-            jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
-            jit_value_t tmpb_2;
-            BOUND_CORESIZE_HIGH_JIT(tmpb_2, tmpb_);
-            JIT_INSTR2_S(b_pi_tmp1, b, tmpb_2);
-            break; }
       }
 
       if(go_on) { //enqueue next instruction
