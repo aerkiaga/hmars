@@ -1034,8 +1034,8 @@ void simulate1(_corefun0) {
               #endif
               break;
             case M_F: case M_I:
-              val1 = bi._A * ai._B;
-              val2 = bi._B * ai._A;
+              val1 = bi._A * ai._A;
+              val2 = bi._B * ai._B;
               #ifdef HOOK_ONWRITE
               hook_onwrite_A(_corecall bp, val1 % CORESIZE);
               #else
