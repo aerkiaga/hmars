@@ -1126,17 +1126,17 @@ void simulate1(_corefun0) {
             case M_F: case M_I:
               if(ai._B) {
                 #ifdef HOOK_ONWRITE
-                hook_onwrite_A(_corecall bp, bi._B / ai._B);
+                hook_onwrite_B(_corecall bp, bi._B / ai._B);
                 #else
-                hook_onwrite_A(bp, bi._B / ai._B);
+                hook_onwrite_B(bp, bi._B / ai._B);
                 #endif
               }
               else chkend = 1;
               if(ai._A) {
                 #ifdef HOOK_ONWRITE
-                hook_onwrite_B(_corecall bp, bi._A / ai._A);
+                hook_onwrite_A(_corecall bp, bi._A / ai._A);
                 #else
-                hook_onwrite_B(bp, bi._A / ai._A);
+                hook_onwrite_A(bp, bi._A / ai._A);
                 #endif
               }
               else chkend = 1;
@@ -1233,17 +1233,17 @@ void simulate1(_corefun0) {
             case M_F: case M_I:
               if(ai._B) {
                 #ifdef HOOK_ONWRITE
-                hook_onwrite_A(_corecall bp, bi._A % ai._B);
+                hook_onwrite_B(_corecall bp, bi._B % ai._B);
                 #else
-                hook_onwrite_A(bp, bi._A % ai._B);
+                hook_onwrite_B(bp, bi._B % ai._B);
                 #endif
               }
               else chkend = 1;
               if(ai._A) {
                 #ifdef HOOK_ONWRITE
-                hook_onwrite_B(_corecall bp, bi._B % ai._A);
+                hook_onwrite_A(_corecall bp, bi._A % ai._A);
                 #else
-                hook_onwrite_B(bp, bi._B % ai._A);
+                hook_onwrite_A(bp, bi._A % ai._A);
                 #endif
               }
               else chkend = 1;
