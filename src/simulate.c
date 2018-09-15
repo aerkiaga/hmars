@@ -528,6 +528,7 @@ void simulate1(_corefun0) {
       #endif
       INSTR1 I;
       I._I = l_core1[pc]._I;
+      //printf("[##] "); debug_println1(l_core1[##]._I); //D
       //debug_println1(I._I); //D
       int16_t ap = 0;
       INSTR1 ai;
@@ -2050,6 +2051,7 @@ void simulate2(_corefun0) {
       addr2_t a, b;
       a = l_core2[pc].a;
       b = l_core2[pc].b;
+      //printf("[##] "); debug_println2(l_core2[##]); //D
       //debug_println2(l_core2[pc]); //D
       if(l_core2[pc].fn(_corecall l_core2, pc, a, b)) goto _label_endbattle; //<here sigsegv
     }
