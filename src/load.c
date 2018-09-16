@@ -1735,7 +1735,12 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
-              JIT_INSTR2_S(tmp1, a, tmpa_2);
+
+              jit_value_t ma = JIT_INSTR2_L(tmp1, a);
+              jit_value_t ma_ = jit_insn_sub(function, ma, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t ma_2;
+              BOUND_CORESIZE_LOW_JIT(ma_2, ma_);
+              JIT_INSTR2_S(tmp1, a, ma_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
               break; }
             case M_B: case M_AB: {
@@ -1743,7 +1748,12 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
-              JIT_INSTR2_S(tmp1, b, tmpb_2);
+
+              jit_value_t mb = JIT_INSTR2_L(tmp1, b);
+              jit_value_t mb_ = jit_insn_sub(function, mb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t mb_2;
+              BOUND_CORESIZE_LOW_JIT(mb_2, mb_);
+              JIT_INSTR2_S(tmp1, b, mb_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
             case M_F: case M_X: case M_I:  {
@@ -1753,8 +1763,16 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
-              JIT_INSTR2_S(tmp1, a, tmpa_2);
-              JIT_INSTR2_S(tmp1, b, tmpb_2);
+
+              jit_value_t ma = JIT_INSTR2_L(tmp1, a);
+              jit_value_t mb = JIT_INSTR2_L(tmp1, b);
+              jit_value_t ma_ = jit_insn_sub(function, ma, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t mb_ = jit_insn_sub(function, mb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t ma_2, mb_2;
+              BOUND_CORESIZE_LOW_JIT(ma_2, ma_);
+              BOUND_CORESIZE_LOW_JIT(mb_2, mb_);
+              JIT_INSTR2_S(tmp1, a, ma_2);
+              JIT_INSTR2_S(tmp1, b, mb_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
@@ -1782,7 +1800,12 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpa_ = jit_insn_sub(function, bi_a, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpa_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
-              JIT_INSTR2_S(tmp1, a, tmpa_2);
+
+              jit_value_t ma = JIT_INSTR2_L(tmp1, a);
+              jit_value_t ma_ = jit_insn_sub(function, ma, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t ma_2;
+              BOUND_CORESIZE_LOW_JIT(ma_2, ma_);
+              JIT_INSTR2_S(tmp1, a, ma_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
               break; }
             case M_B: case M_AB: {
@@ -1790,7 +1813,12 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpb_ = jit_insn_sub(function, bi_b, JIT_CONST(1, jit_type_addr2s));
               jit_value_t tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
-              JIT_INSTR2_S(tmp1, b, tmpb_2);
+
+              jit_value_t mb = JIT_INSTR2_L(tmp1, b);
+              jit_value_t mb_ = jit_insn_sub(function, mb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t mb_2;
+              BOUND_CORESIZE_LOW_JIT(mb_2, mb_);
+              JIT_INSTR2_S(tmp1, b, mb_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
             case M_F: case M_X: case M_I:  {
@@ -1800,8 +1828,16 @@ void load2(WARRIOR* w, LINE* txt) {
               jit_value_t tmpa_2, tmpb_2;
               BOUND_CORESIZE_LOW_JIT(tmpa_2, tmpa_);
               BOUND_CORESIZE_LOW_JIT(tmpb_2, tmpb_);
-              JIT_INSTR2_S(tmp1, a, tmpa_2);
-              JIT_INSTR2_S(tmp1, b, tmpb_2);
+
+              jit_value_t ma = JIT_INSTR2_L(tmp1, a);
+              jit_value_t mb = JIT_INSTR2_L(tmp1, b);
+              jit_value_t ma_ = jit_insn_sub(function, ma, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t mb_ = jit_insn_sub(function, mb, JIT_CONST(1, jit_type_addr2s));
+              jit_value_t ma_2, mb_2;
+              BOUND_CORESIZE_LOW_JIT(ma_2, ma_);
+              BOUND_CORESIZE_LOW_JIT(mb_2, mb_);
+              JIT_INSTR2_S(tmp1, a, ma_2);
+              JIT_INSTR2_S(tmp1, b, mb_2);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpa_2), &labele);
               jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, tmpb_2), &labele);
               break; }
