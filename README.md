@@ -26,4 +26,4 @@ Option | Description
 `--test` | Ignores other options and performs self-test.
 
 ### Debugger
-The debugger is not currently finished. For now, it only displays the ongoing round on a rectangular area.
+The debugger is not currently finished. For now, it only displays the ongoing round on a rectangular area. It starts paused, and clicking on it begins the simulation.
