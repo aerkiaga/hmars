@@ -1052,7 +1052,7 @@ void load2(WARRIOR* w, LINE* txt) {
             jit_value_t bp_2;
             BOUND_CORESIZE_HIGH_JIT(bp_2, bp_);
             jit_value_t tmp1 = JIT_CORE2_L(bp_2);
-            jit_value_t tmpb = JIT_INSTR2_L(tmp1, a);
+            jit_value_t tmpb = JIT_INSTR2_L(tmp1, b);
 
             jit_value_t tmpb_ = jit_insn_add(function, tmpb, JIT_CONST(1, jit_type_addr2s));
             jit_value_t tmpb_2;
