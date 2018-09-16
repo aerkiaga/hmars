@@ -2309,12 +2309,12 @@ void load2(WARRIOR* w, LINE* txt) {
             switch(c1[c]._M) {
               case M_I: {
                 jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-                  (jit_value_t[]){local_core_jit, JIT_CONST(M_I, jit_type_uint), ai_a, ai_b,
+                  (jit_value_t[]){local_core_jit, JIT_CONST(M_I, jit_type_ubyte), ai_a, ai_b,
                   JIT_INSTR2_fn_L(JIT_CORE2_L(ap))}, 5, JIT_CALL_NOTHROW);
                 break; }
               case M_A: case M_AB: {
                 jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-                  (jit_value_t[]){local_core_jit, JIT_CONST(c1[c]._M, jit_type_ubyte), ap, JIT_CONST(0, jit_type_addr2),
+                  (jit_value_t[]){local_core_jit, JIT_CONST(c1[c]._M, jit_type_ubyte), ai_a, JIT_CONST(0, jit_type_addr2),
                   JIT_CONST(0, jit_type_void_ptr)}, 5, JIT_CALL_NOTHROW);
                 break; }
               case M_B: case M_BA: {
