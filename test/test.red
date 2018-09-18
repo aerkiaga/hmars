@@ -28,7 +28,7 @@ count   djn.b	0,	#TIME
 loop	add.f	}point,	count
 	djn.b	loop,	#SIZE
 	add.ab	count,	count
-	mod.b	count,	#2
+	mod.ab	#2,	count
 	jmz.b	clear,	count
 	jmp	#0	;self-tie
 bomb
