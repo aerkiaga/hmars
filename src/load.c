@@ -2111,7 +2111,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_pcell)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2130,7 +2130,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_pcell)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2149,7 +2149,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_pcell)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
@@ -2168,7 +2168,7 @@ void load2(WARRIOR* w, LINE* txt) {
                 jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, jit_type_pcell));
               jit_insn_branch(function, &labelb2);
               jit_insn_label(function, &labele2);
-                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_void_ptr)); //.psp0
+                jit_insn_store(function, tmpv, jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, psp0), jit_type_pcell)); //.psp0
               jit_insn_label(function, &labelb2);
 
               jit_value_t tmp1 = JIT_CORE2_L(bp);
