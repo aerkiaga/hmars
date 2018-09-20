@@ -125,7 +125,8 @@ int self_test() {
 
   int n;
   int wins = 0;
-  for(n = 0; n < 1000; ++n) {
+  for(n = 0; n < 10000; ++n) {
+    if(n % 1000 == 0) printf("Round %d (%f%% wins)\n", n, 100.0*wins/(n?:1)); //D
     load1(&warriors[0], loadt);
     test_crash_loaded = 1;
     load2(&warriors[0], loadt);
@@ -166,7 +167,7 @@ int self_test() {
   mdestroy(warriors[0].mutex);
   #endif
 
-  printf("wins: %d / 1000\n", wins);
+  printf("wins: %d / 10000\n", wins);
   puts("PASSED!");
 
   unload_all();
@@ -286,6 +287,15 @@ int main(int argc, char* argv[]) {
 
   #else
   battle1_single(ROUNDS);
+  /*puts("Result:\n Wins  Ties Loses Score  Name and author");
+  for(c = 0; c < WARRIORS; ++c)
+    printf("%5d %5d %5d %5d  %s by %s\n",
+      warriors[c].wins, warriors[c].ties, warriors[c].losses, warriors[c].score, warriors[c].name, warriors[c].author);
+
+  warriors[0].wins = warriors[0].losses = 0;
+  memset(warriors[0].pspace, 0, PSPACESIZE * sizeof(pcell_t));
+  warriors[0].psp0 = CORESIZE - 1;
+  battle2_single(ROUNDS);*/ //D
   #endif
 
   puts("Result:\n Wins  Ties Loses Score  Name and author");
