@@ -463,6 +463,7 @@ extern void finalize(void);
 extern int parse_load(char**, char**, char*);
 extern void unload_all(void);
 #ifdef _COREVIEW_
+extern void init_coreview(void);
 extern void draw_coreview(COREVIEW*);
 extern COREVIEW* new_coreview(void);
 extern void set_coreview_pos(COREVIEW*, unsigned int, unsigned int);

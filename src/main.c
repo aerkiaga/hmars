@@ -241,6 +241,7 @@ int main(int argc, char* argv[]) {
   if(opt_VERBOSE) puts("Running...");
 
   #ifdef _COREVIEW_
+  init_coreview();
   LOCAL_CORE* local_core = battle1_async(ROUNDS);
   COREVIEW* cv = new_coreview();
   set_coreview_pos(cv, 0, 0);

@@ -140,6 +140,30 @@ char*** cell_icons;
 
 int cell_icon_max_size = 4;
 
+void init_coreview() {
+  minit(mutex_commun_global);
+  SDL_Init(SDL_INIT_VIDEO);
+  window = SDL_CreateWindow("hMARS core view",
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480,
+    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+  renderer = SDL_CreateRenderer(window, -1,
+    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
+
+  cell_icons = malloc((cell_icon_max_size + 1) * sizeof(void*));
+  int c;
+  for(c = 0; c <= cell_icon_max_size; ++c) {
+    cell_icons[c] = malloc(7 * sizeof(void*));
+    int k;
+    for(k = 0; k < 7; ++k) {
+      cell_icons[c][k] = malloc(strlen(cell_icons_default[c][k]) + 1);
+      strcpy(cell_icons[c][k], cell_icons_default[c][k]);
+    }
+  }
+  return;
+}
+
 void update_coreview_metrics(COREVIEW* cv) {
   cv->cw = 100; //    just
   cv->ch = 80; //     some

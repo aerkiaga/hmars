@@ -2759,29 +2759,6 @@ void initialize() {
   minit(mutex_pwarriors);
   #endif
 
-  #ifdef _COREVIEW_
-  minit(mutex_commun_global);
-  SDL_Init(SDL_INIT_VIDEO);
-  window = SDL_CreateWindow("hMARS core view",
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480,
-    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-  renderer = SDL_CreateRenderer(window, -1,
-    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  SDL_RenderClear(renderer);
-
-  cell_icons = malloc((cell_icon_max_size + 1) * sizeof(void*));
-  int c;
-  for(c = 0; c <= cell_icon_max_size; ++c) {
-    cell_icons[c] = malloc(7 * sizeof(void*));
-    int k;
-    for(k = 0; k < 7; ++k) {
-      cell_icons[c][k] = malloc(strlen(cell_icons_default[c][k]) + 1);
-      strcpy(cell_icons[c][k], cell_icons_default[c][k]);
-    }
-  }
-  #endif
-
   if((algorithm_select >> 2) & 1) { //add _hardcoded_dat to instruction list
     g_data2.hasht[0].oma = 0;
     g_data2.hasht[0].fn = (jitfunc2_t) _hardcoded_dat;
