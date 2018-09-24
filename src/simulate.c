@@ -540,10 +540,9 @@ void simulate1(_corefun0) {
         case A_IMM:
           ap = pc;
           #ifdef HOOK_ONREAD
-          ai._I = hook_onread(_corecall pc);
-          #else
-          ai._I = I._I;
+          hook_onread(_corecall pc);
           #endif
+          ai._I = I._I;
           break;
         #endif
         #ifdef A_DIR
@@ -693,10 +692,9 @@ void simulate1(_corefun0) {
         case A_IMM:
           bp = pc;
           #ifdef HOOK_ONREAD
-          bi._I = hook_onread(_corecall pc);
-          #else
-          bi._I = I._I;
+          hook_onread(_corecall pc);
           #endif
+          bi._I = I._I;
           break;
         #endif
         #ifdef A_DIR
