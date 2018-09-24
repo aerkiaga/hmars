@@ -1905,6 +1905,12 @@ unsigned int inline battle1_single(unsigned long nrounds) { //returns actual num
   #ifdef TSAFE_CORE
   LOCAL_CORE* local_core = malloc(sizeof(LOCAL_CORE));
   #endif
+  #ifdef _COREVIEW_
+  minit(l_mutex_exec);
+  minit(l_mutex_mode);
+  cinit(l_cond_exec);
+  set_core_runmode(local_core, RUN_FAST, 1000000); //at highest possible speed
+  #endif
 
   unsigned int r = battle1(_corecall nrounds);
 

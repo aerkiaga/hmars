@@ -410,16 +410,21 @@ void set_coreview_target(COREVIEW* cv, unsigned int tgm, ...) {
   return;
 }
 
-void set_core_runmode(COREVIEW* cv, unsigned int rm, unsigned int rp) {
-  mlock(cv->l_mutex_mode);
-  if(cv->l_runmode == RUN_PAUSED) {
+void set_core_runmode(LOCAL_CORE* local_core, unsigned int rm, unsigned int rp) {
+  mlock(l_mutex_mode);
+  if(l_runmode == RUN_PAUSED) {
     if(rm == RUN_PAUSED) return;
-    csignal(cv->l_cond_exec); //unpause core
+    csignal(l_cond_exec); //unpause core
   }
-  cv->l_runmode = rm;
-  cv->l_runparam = rp;
-  if(rm == RUN_FAST) cv->l_rundata = 0;
-  munlock(cv->l_mutex_mode);
+  l_runmode = rm;
+  l_runparam = rp;
+  if(rm == RUN_FAST) l_rundata = 0;
+  munlock(l_mutex_mode);
+  return;
+}
+
+void set_coreview_runmode(COREVIEW* cv, unsigned int rm, unsigned int rp) {
+  set_core_runmode(cv->local_core, rm, rp);
   return;
 }
 

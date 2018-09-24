@@ -469,6 +469,7 @@ extern COREVIEW* new_coreview(void);
 extern void set_coreview_pos(COREVIEW*, unsigned int, unsigned int);
 extern void set_coreview_core(COREVIEW*, LOCAL_CORE*);
 extern void set_coreview_target(COREVIEW*, unsigned int, ...);
-extern void set_core_runmode(COREVIEW*, unsigned int, unsigned int);
+extern void set_core_runmode(LOCAL_CORE*, unsigned int, unsigned int);
+extern void set_coreview_runmode(COREVIEW*, unsigned int, unsigned int);
 extern void destroy_coreview(COREVIEW*);
 #endif

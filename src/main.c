@@ -251,7 +251,7 @@ int main(int argc, char* argv[]) {
 
   int quit = 0;
   SDL_Event e;
-  set_core_runmode(cv, RUN_CLOCK, 1);
+  set_coreview_runmode(cv, RUN_CLOCK, 1);
   while(!quit) {
     //draw window
     SDL_SetRenderDrawColor(renderer, 0x8F, 0x8F, 0x8F, 0xFF);
