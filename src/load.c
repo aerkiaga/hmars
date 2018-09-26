@@ -2716,28 +2716,64 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
   return 0;
 }
 
+void unload_warrior(int c) {
+  if(warriors[c].code1 != NULL) {free(warriors[c].code1); warriors[c].code1 = NULL;}
+  if(warriors[c].code2 != NULL) {free(warriors[c].code2); warriors[c].code2 = NULL;}
+  free(warriors[c].name); warriors[c].name = NULL;
+  free(warriors[c].author); warriors[c].author = NULL;
+  #if PSPACESIZE
+  unsigned long k;
+  int check = 0;
+  if(warriors[c].haspin) {
+    for(k = 0; k < c; ++k) {
+      if(warriors[c].pin == warriors[k].pin) check = 1;
+    }
+  }
+  if(!check) free(warriors[c].pspace);
+  warriors[c].pspace = NULL;
+  #endif
+  #ifdef TSAFE_CORE
+  mdestroy(warriors[c].mutex);
+  #endif
+  return;
+}
+
 void unload_all() {
   unsigned long c;
   for(c = 0; c < WARRIORS; ++c) {
-    if(warriors[c].code1 != NULL) free(warriors[c].code1);
-    if(warriors[c].code2 != NULL) free(warriors[c].code2);
-    free(warriors[c].name);
-    free(warriors[c].author);
-    #if PSPACESIZE
-    unsigned long k;
-    int check = 0;
-    if(warriors[c].haspin) {
-      for(k = 0; k < c; ++k) {
-        if(warriors[c].pin == warriors[k].pin) check = 1;
-      }
-    }
-    if(!check) free(warriors[c].pspace);
-    #endif
-    #ifdef TSAFE_CORE
-    mdestroy(warriors[c].mutex);
-    #endif
+    unload_warrior(c);
   }
   free(warriors);
+  return;
+}
+
+void set_nwarriors(int nw) {
+  if(nw < WARRIORS) {
+    int c;
+    for(c = nw; c < WARRIORS; ++c) {
+      unload_warrior(c);
+    }
+  }
+  WARRIORS = nw;
+  warriors = (WARRIOR*) realloc(warriors, WARRIORS * sizeof(WARRIOR));
+  return;
+}
+
+void reset_warrior(WARRIOR* w) {
+  memset(w->pspace, 0, PSPACESIZE * sizeof(pcell_t));
+  w->psp0 = CORESIZE - 1;
+  w->wins = w->losses = 0;
+  return;
+}
+
+void init_warrior(WARRIOR* w) {
+  #if PSPACESIZE
+  w->pspace = malloc(PSPACESIZE * sizeof(pcell_t));
+  #endif
+  #ifdef TSAFE_CORE
+  minit(w->mutex);
+  #endif
+  reset_warrior(w);
   return;
 }
 

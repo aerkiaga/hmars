@@ -97,9 +97,8 @@ int self_test() {
   puts("Performing self test...");
   /*TEST 1*/
   puts("TEST 1: classic vs JIT");
-  WARRIORS = 1;
   initialize();
-  warriors = malloc(WARRIORS * sizeof(WARRIOR));
+  set_nwarriors(1);
   FILE* red = fopen(PATH_TEST_TEST, "rt");
   if(red == NULL) {
     error("Could not open %s.", PATH_TEST_TEST);
@@ -116,12 +115,7 @@ int self_test() {
   signal(SIGILL, test_crash_handler);
   signal(SIGFPE, test_crash_handler);
 
-  #if PSPACESIZE
-  warriors[0].pspace = malloc(PSPACESIZE * sizeof(pcell_t));
-  #endif
-  #ifdef TSAFE_CORE
-  minit(warriors[0].mutex);
-  #endif
+  init_warrior(&warriors[0]);
 
   int n;
   int wins = 0;
@@ -132,13 +126,10 @@ int self_test() {
     load2(&warriors[0], loadt);
 
     int w;
-    memset(warriors[0].pspace, 0, PSPACESIZE * sizeof(pcell_t));
-    warriors[0].psp0 = CORESIZE - 1;
+    reset_warrior(&warriors[0]);
     battle1_single(1);
     w = warriors[0].wins;
-    warriors[0].wins = warriors[0].losses = 0;
-    memset(warriors[0].pspace, 0, PSPACESIZE * sizeof(pcell_t));
-    warriors[0].psp0 = CORESIZE - 1;
+    reset_warrior(&warriors[0]);
     battle2_single(1);
     if(w != warriors[0].wins) {
       puts("The two simulators produced different results.");

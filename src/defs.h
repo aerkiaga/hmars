@@ -461,6 +461,10 @@ extern void load2(WARRIOR*, LINE*);
 extern void initialize(void);
 extern void finalize(void);
 extern int parse_load(char**, char**, char*);
+extern void set_nwarriors(int);
+extern void reset_warrior(WARRIOR*);
+extern void init_warrior(WARRIOR*);
+extern void unload_warrior(int);
 extern void unload_all(void);
 #ifdef _COREVIEW_
 extern void init_coreview(void);
