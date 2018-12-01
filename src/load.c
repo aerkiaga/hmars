@@ -2421,7 +2421,7 @@ void compile_jit_main_loop() {
 
   //JIT compiler
   jit_context_build_start(jit_context);
-  //jit_type_t jit_type_instr2 = compile_jit_type_instr2();
+  jit_type_t jit_type_instr2 = compile_jit_type_instr2();
   //jit_type_t jit_type_pcell = JIT_TYPE(pcell_t);
   //jit_type_t jit_type_warrior = compile_jit_type_warrior(jit_type_pcell);
   jit_type_t jit_type_proc2 = compile_jit_type_proc2();
@@ -2466,8 +2466,8 @@ void compile_jit_main_loop() {
     jit_label_t labelinend = jit_label_undefined;
     jit_insn_label(function, &labelinstart);
     jit_insn_branch_if_not(function, jit_insn_lt(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_nrunning), jit_type_sys_ulong)), &labelinend);
-      jit_value_t pc = jit_insn_load_relative(function, jit_insn_load_elem_address(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), jit_type_proc2), offsetof(PROC2, pos), jit_type_addr2); //addr2_t pc = l_proc2[l_w2]->pos
-      jit_value_t _tmp = jit_insn_load_elem_address(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr), pc, jit_type_proc2); //(&l_core2[pc])
+      jit_value_t pc = JIT_PROC2_pos_L(JIT_LPROC2_L(jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong))); //addr2_t pc = l_proc2[l_w2]->pos
+      jit_value_t _tmp = jit_insn_load_elem_address(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr), pc, jit_type_instr2); //(&l_core2[pc])
       jit_value_t a = jit_insn_load_relative(function, _tmp, offsetof(INSTR2, a), jit_type_addr2); //addr2_t a = l_core2[pc].a;
       jit_value_t b = jit_insn_load_relative(function, _tmp, offsetof(INSTR2, b), jit_type_addr2); //addr2_t b = l_core2[pc].b;
       #ifdef TSAFE_CORE
