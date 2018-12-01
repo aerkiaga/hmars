@@ -2049,18 +2049,7 @@ void simulate2(_corefun0) {
   #endif
 
   //run in a loop
-  for(c = 0; c < MAXCYCLES; ++c) {
-    for(l_w2 = 0; l_w2 < l_nrunning; ++l_w2) {
-      addr2_t pc = l_proc2[l_w2]->pos;
-      addr2_t a, b;
-      a = l_core2[pc].a;
-      b = l_core2[pc].b;
-      //printf("[##] "); debug_println2(l_core2[##]); //D
-      //debug_println2(l_core2[pc]); //D
-      if(l_core2[pc].fn(_corecall l_core2, pc, a, b)) goto _label_endbattle; //<here sigsegv
-    }
-  }
-  _label_endbattle:
+  jit_main_loop(_corecal0);
 
   #if defined(TSAFE_CORE) && PSPACESIZE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);

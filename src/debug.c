@@ -320,7 +320,7 @@ void update_coreview_metrics(COREVIEW* cv) {
     cv->cw * cv->csize, cv->ch * cv->csize);
   if(cv->data != NULL) free(cv->data);
   cv->data = malloc(4 * cv->cw * cv->csize * cv->ch * cv->csize);
-  memset(cv->data, 0, 4 * cv->cw * cv->csize * cv->ch * cv->csize); //here the crash
+  memset(cv->data, 0, 4 * cv->cw * cv->csize * cv->ch * cv->csize);
   return;
 }
 

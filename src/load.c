@@ -423,6 +423,34 @@ int _hardcoded_dat(_corefunc INSTR2* core2, addr2_t pc, addr2_t a, addr2_t b) { 
   return remove_proc_jit(_corecal0);
 }
 
+void (*jit_main_loop)(_corefun0) = NULL;
+
+jit_type_t compile_jit_type_instr2() {
+  jit_type_t fields[3] = {jit_type_void_ptr, jit_type_addr2, jit_type_addr2};
+  return jit_type_create_struct(fields, 3, 1);
+}
+
+jit_type_t compile_jit_type_warrior(jit_type_t jit_type_pcell) {
+  jit_type_t fields3[] = {jit_type_sys_ulong, jit_type_void_ptr, jit_type_void_ptr, jit_type_sys_uint, jit_type_void_ptr, jit_type_void_ptr,
+  #if PSPACESIZE
+    jit_type_void_ptr, jit_type_pcell, jit_type_sys_ulong, jit_type_sys_int,
+  #endif
+    jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint
+  #ifdef TSAFE_CORE
+    , JIT_TYPE(MUTEX)
+  #endif
+  #ifdef _COREVIEW_
+    , jit_type_uint
+  #endif
+  };
+  return jit_type_create_struct(fields3, 3, 1);
+}
+
+jit_type_t compile_jit_type_proc2() {
+  jit_type_t fields3[] = {jit_type_addr2, jit_type_void_ptr, jit_type_void_ptr};
+  return jit_type_create_struct(fields3, 3, 1);
+}
+
 void load2(WARRIOR* w, LINE* txt) {
   INSTR1* c1; //get some temporary code
   if(w->code1 != NULL) c1 = w->code1;
@@ -441,8 +469,7 @@ void load2(WARRIOR* w, LINE* txt) {
   #endif
   //JIT compiler
   jit_context_build_start(jit_context);
-  jit_type_t fields[3] = {jit_type_void_ptr, jit_type_addr2, jit_type_addr2};
-  jit_type_t jit_type_instr2 = jit_type_create_struct(fields, 3, 1);
+  jit_type_t jit_type_instr2 = compile_jit_type_instr2();
   #ifdef TSAFE_CORE
   jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
   #else
@@ -457,20 +484,9 @@ void load2(WARRIOR* w, LINE* txt) {
   #endif
   jit_type_t signature_mlock_helper_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, NULL, 0, 1);
   jit_type_t jit_type_pcell = JIT_TYPE(pcell_t);
-  jit_type_t fields3[] = {jit_type_sys_ulong, jit_type_void_ptr, jit_type_void_ptr, jit_type_sys_uint, jit_type_void_ptr, jit_type_void_ptr,
-  #if PSPACESIZE
-    jit_type_void_ptr, jit_type_pcell, jit_type_sys_ulong, jit_type_sys_int,
-  #endif
-    jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint
-  #ifdef TSAFE_CORE
-    , JIT_TYPE(MUTEX)
-  #endif
-  #ifdef _COREVIEW_
-    , jit_type_uint
-  #endif
-  };
+
   //#define was here
-  jit_type_t jit_type_warrior = jit_type_create_struct(fields3, 3, 1);
+  jit_type_t jit_type_warrior = compile_jit_type_warrior(jit_type_pcell);
   #ifdef O_STS
   #ifdef TSAFE_CORE
   jit_type_t signature_sts_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr, jit_type_uint, jit_type_addr2, jit_type_addr2, jit_type_void_ptr}, 5, 1);
@@ -490,9 +506,17 @@ void load2(WARRIOR* w, LINE* txt) {
     }
     else { //non-duplicate, must compile
       jit_function_t function;
+      #ifdef TSAFE_CORE
       jit_type_t params[5] = {jit_type_void_ptr, jit_type_void_ptr, jit_type_addr2, jit_type_addr2, jit_type_addr2};
+      #else
+      jit_type_t params[4] = {jit_type_void_ptr, jit_type_addr2, jit_type_addr2, jit_type_addr2};
+      #endif
       jit_type_t signature;
+      #ifdef TSAFE_CORE
       signature = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, params, 5, 1);
+      #else
+      signature = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, params, 4, 1);
+      #endif
       function = jit_function_create(jit_context, signature);
       //jit_insn_mark_breakpoint (function, jit_nint data1, jit_nint data2)
 
@@ -2379,6 +2403,94 @@ void load2(WARRIOR* w, LINE* txt) {
   return;
 }
 
+void compile_jit_main_loop() {
+  /** Target code:
+  for(c = 0; c < MAXCYCLES; ++c) {
+    for(l_w2 = 0; l_w2 < l_nrunning; ++l_w2) {
+      addr2_t pc = l_proc2[l_w2]->pos;
+      addr2_t a, b;
+      a = l_core2[pc].a;
+      b = l_core2[pc].b;
+      //printf("[##] "); debug_println2(l_core2[##]); //D
+      //debug_println2(l_core2[pc]); //D
+      if(l_core2[pc].fn(_corecall l_core2, pc, a, b)) goto _label_endbattle; //<here sigsegv
+    }
+  }
+  _label_endbattle:
+  */
+
+  //JIT compiler
+  jit_context_build_start(jit_context);
+  //jit_type_t jit_type_instr2 = compile_jit_type_instr2();
+  //jit_type_t jit_type_pcell = JIT_TYPE(pcell_t);
+  //jit_type_t jit_type_warrior = compile_jit_type_warrior(jit_type_pcell);
+  jit_type_t jit_type_proc2 = compile_jit_type_proc2();
+
+
+  jit_function_t function;
+  #ifdef TSAFE_CORE
+  jit_type_t params[1] = {jit_type_void_ptr};
+  #endif
+  jit_type_t signature;
+  #ifdef TSAFE_CORE
+  signature = jit_type_create_signature(jit_abi_cdecl, jit_type_void, params, 1, 1);
+  #else
+  signature = jit_type_create_signature(jit_abi_cdecl, jit_type_void, NULL, 0, 1);
+  #endif
+  function = jit_function_create(jit_context, signature);
+
+  jit_type_t signature_jitfunc2;
+  #ifdef TSAFE_CORE
+  jit_type_t params_jitfunc2[5] = {jit_type_void_ptr, jit_type_void_ptr, jit_type_addr2, jit_type_addr2, jit_type_addr2};
+  signature_jitfunc2 = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, params_jitfunc2, 5, 1);
+  #else
+  jit_type_t params_jitfunc2[4] = {jit_type_void_ptr, jit_type_addr2, jit_type_addr2, jit_type_addr2};
+  signature_jitfunc2 = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, params_jitfunc2, 4, 1);
+  #endif
+
+
+  #ifdef TSAFE_CORE
+  jit_value_t local_core_jit = jit_value_get_param(function, 0);
+  #else
+  jit_value_t local_core_jit = JIT_CONST(local_core, jit_type_void_ptr);
+  #endif
+
+  jit_value_t c = jit_value_create(function, jit_type_sys_ulong);
+  jit_insn_store(function, c, JIT_CONST(0, jit_type_sys_ulong));
+  jit_label_t labeloutstart = jit_label_undefined;
+  jit_label_t labeloutend = jit_label_undefined;
+  jit_insn_label(function, &labeloutstart);
+  jit_insn_branch_if_not(function, jit_insn_lt(function, c, JIT_CONST(MAXCYCLES, jit_type_sys_ulong)), &labeloutend);
+    jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), JIT_CONST(0, jit_type_sys_ulong));
+    jit_label_t labelinstart = jit_label_undefined;
+    jit_label_t labelinend = jit_label_undefined;
+    jit_insn_label(function, &labelinstart);
+    jit_insn_branch_if_not(function, jit_insn_lt(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_nrunning), jit_type_sys_ulong)), &labelinend);
+      jit_value_t pc = jit_insn_load_relative(function, jit_insn_load_elem_address(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), jit_type_proc2), offsetof(PROC2, pos), jit_type_addr2); //addr2_t pc = l_proc2[l_w2]->pos
+      jit_value_t _tmp = jit_insn_load_elem_address(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr), pc, jit_type_proc2); //(&l_core2[pc])
+      jit_value_t a = jit_insn_load_relative(function, _tmp, offsetof(INSTR2, a), jit_type_addr2); //addr2_t a = l_core2[pc].a;
+      jit_value_t b = jit_insn_load_relative(function, _tmp, offsetof(INSTR2, b), jit_type_addr2); //addr2_t b = l_core2[pc].b;
+      #ifdef TSAFE_CORE
+      jit_value_t args[5] = {local_core_jit, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr), pc, a, b};
+      jit_value_t _res = jit_insn_call_indirect(function, jit_insn_load_relative(function, _tmp, offsetof(INSTR2, fn), jit_type_void_ptr), signature_jitfunc2, args, 5, JIT_CALL_NOTHROW);
+      #else
+      jit_value_t args[4] = {jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr), pc, a, b};
+      jit_value_t _res = jit_insn_call_indirect(function, jit_insn_load_relative(function, _tmp, offsetof(INSTR2, fn), jit_type_void_ptr), signature_jitfunc2, args, 4, JIT_CALL_NOTHROW);
+      #endif
+      jit_insn_branch_if(function, _res, &labeloutend);
+    jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_insn_add(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), JIT_CONST(1, jit_type_sys_ulong))); //++l_w2
+    jit_insn_label(function, &labelinend);
+  jit_insn_store(function, c, jit_insn_add(function, c, JIT_CONST(1, jit_type_sys_ulong))); //++c
+  jit_insn_label(function, &labeloutend);
+
+  jit_insn_return(function, NULL);
+  jit_function_compile(function);
+  jit_main_loop = jit_function_to_closure(function);
+
+  jit_context_build_end(jit_context);
+  return;
+}
+
 #define COPY_STR(d, s) \
   if(!s) error("Returned string is NULL."); \
   d = malloc(strlen(s) + 1); \
@@ -2790,6 +2902,7 @@ void initialize() {
 
   jit_init();
   jit_context = jit_context_create();
+  compile_jit_main_loop();
 
   #if defined(TSAFE_CORE) && PSPACESIZE
   minit(mutex_pwarriors);

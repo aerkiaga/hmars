@@ -345,13 +345,13 @@ extern MUTEX mutex_commun_global;
 */
 typedef struct t_LOCAL_CORE {
   INSTR1* l_core1;
-  INSTR2* l_core2;
+  INSTR2* la_core2;
   PROC1** l_proc1; //unordered
   PROC2** la_proc2; //unordered
   uint16_t* l_positions; //ordered
   unsigned long* la_nprocs; //unordered
   unsigned long* l_indices; //maps unordered to ordered
-  unsigned long l_nrunning; //number of warriors that remain alive
+  unsigned long la_nrunning; //number of warriors that remain alive
   int* l_running; //whether they are alive (ordered)
   #ifdef O_PCT
   uint_fast8_t l_isPCT[CORESIZE];
@@ -384,13 +384,13 @@ typedef struct t_LOCAL_CORE {
 #define local_core (&g_local_core)
 #endif
 #define l_core1 local_core->l_core1
-#define l_core2 local_core->l_core2
+#define l_core2 local_core->la_core2
 #define l_positions local_core->l_positions
 #define l_proc1 local_core->l_proc1
 #define l_proc2 local_core->la_proc2 //different alias for standalone member use
 #define l_nprocs local_core->la_nprocs //different alias for standalone member use
 #define l_indices local_core->l_indices
-#define l_nrunning local_core->l_nrunning
+#define l_nrunning local_core->la_nrunning
 #define l_running local_core->l_running
 #define l_pool_proc1 local_core->l_pool_proc1
 #define l_pool_fbase_proc1 local_core->l_pool_fbase_proc1
@@ -455,6 +455,7 @@ extern void debug_println2(INSTR2);
 extern void signal_terminate(void);
 extern int check_terminate(void);
 extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
+extern void (*jit_main_loop)(_corefun0);
 extern void load1(WARRIOR*, LINE*);
 extern void load2(WARRIOR*, LINE*);
 //Global for all threads
