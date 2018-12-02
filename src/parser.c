@@ -574,11 +574,16 @@ LINE* file2text(FILE* file) {
   int lc, iseof = 0;
   for(lc = 1; !iseof; ++lc) {
     long pos = ftell(file);
-    int l;
+    int l, crlf = 0;
     for(l = 0;; ++l) {
       int ch = fgetc(file);
       if(ch == EOF) iseof = 1;
-      if(ch == '\n' || ch == '\r' || ch == '\v' || ch == '\f' || ch == EOF) break;
+      if(ch == '\r') { //CRLF
+        ch = fgetc(file);
+        if(ch == '\n') crlf = 1;
+        break;
+      }
+      if(ch == '\n' || ch == '\v' || ch == '\f' || ch == EOF) break;
     }
     LINE* rp = rc;
     rc = (LINE*) malloc(sizeof(LINE));
@@ -594,6 +599,7 @@ LINE* file2text(FILE* file) {
     }
     fseek(file, pos, SEEK_SET);
     fgets(rc->data, l+1, file);
+    if(crlf) fgetc(file); //skip CR in CRLF
     fgetc(file); //advance to next line
     rc->nhist = 1;
     rc->hist = malloc(sizeof(TEXTHIST));
