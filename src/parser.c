@@ -3703,14 +3703,14 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
           }
           else if(parsopt.field_count_rules == 1) { //exact number
             if(def_nops != 1) {
-              parser_error(line, "current parser settings require two fields on %s.", s_op);
+              parser_error(line, "current parser settings require two fields on %c%c%c.", (s_op >> 16) & 0xFF, (s_op >> 8) & 0xFF, s_op & 0xFF);
               freetext(txt);
               return NULL;
             }
           }
           else if(parsopt.field_count_rules == 2) {
             if(def_nops != 1) {
-              parser_error(line, "current parser settings don't allow omitting a field on %s.", s_op);
+              parser_error(line, "current parser settings don't allow omitting a field on %c%c%c.", (s_op >> 16) & 0xFF, (s_op >> 8) & 0xFF, s_op & 0xFF);
               freetext(txt);
               return NULL;
             }
@@ -3734,7 +3734,7 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
         else { //two operands
           if(parsopt.field_count_rules == 1) {
             if(def_nops != 2) {
-              parser_error(line, "current parser settings require a single field on %s.", s_op);
+              parser_error(line, "current parser settings require a single field on %c%c%c.", (s_op >> 16) & 0xFF, (s_op >> 8) & 0xFF, s_op & 0xFF);
               freetext(txt);
               return NULL;
             }
