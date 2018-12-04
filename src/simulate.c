@@ -1819,11 +1819,11 @@ void simulate1(_corefun0) {
 unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number of rounds
   unsigned int cround;
   l_core1 = malloc(CORESIZE * sizeof(INSTR1));
-  l_positions = malloc(WARRIORS * 2);
-  l_proc1 = malloc(CORESIZE * sizeof(PROC1*));
-  l_nprocs = malloc(CORESIZE * sizeof(unsigned long));
-  l_indices = malloc(CORESIZE * sizeof(unsigned long));
-  l_running = malloc(CORESIZE * sizeof(int));
+  l_positions = malloc(WARRIORS * sizeof(uint16_t));
+  l_proc1 = malloc(WARRIORS * sizeof(PROC1*));
+  l_nprocs = malloc(WARRIORS * sizeof(unsigned long));
+  l_indices = malloc(WARRIORS * sizeof(unsigned long));
+  l_running = malloc(WARRIORS * sizeof(int));
   #ifdef _COREVIEW_
   l_coreviewdata = malloc(CORESIZE * sizeof(CVCELL));
   #endif
@@ -2062,11 +2062,11 @@ void simulate2(_corefun0) {
 unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number of rounds
   unsigned int cround;
   l_core2 = malloc(CORESIZE * sizeof(INSTR2));
-  l_positions = malloc(WARRIORS * 2);
-  l_proc2 = malloc(CORESIZE * sizeof(PROC2*));
-  l_nprocs = malloc(CORESIZE * sizeof(unsigned long));
-  l_indices = malloc(CORESIZE * sizeof(unsigned long));
-  l_running = malloc(CORESIZE * sizeof(int));
+  l_positions = malloc(WARRIORS * sizeof(uint16_t));
+  l_proc2 = malloc(WARRIORS * sizeof(PROC2*));
+  l_nprocs = malloc(WARRIORS * sizeof(unsigned long));
+  l_indices = malloc(WARRIORS * sizeof(unsigned long));
+  l_running = malloc(WARRIORS * sizeof(int));
   init_pool_proc2();
   unsigned long w;
   for(w = 0; w < WARRIORS; ++w) {
