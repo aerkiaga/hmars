@@ -254,10 +254,14 @@ typedef union t_INSTR1 {
 typedef uint32_t addr2_t;
 #define jit_type_addr2 jit_type_uint
 #define jit_type_addr2s jit_type_int
-#ifdef TSAFE_CORE
-typedef int (*jitfunc2_t)(void*, void*, addr2_t, addr2_t, addr2_t);
+#ifdef LIBJIT_NESTING
+  typedef void* jitfunc2_t; //only callable from JIT main loop
 #else
-typedef int (*jitfunc2_t)(void*, addr2_t, addr2_t, addr2_t);
+  #ifdef TSAFE_CORE
+  typedef int (*jitfunc2_t)(void*, void*, addr2_t, addr2_t, addr2_t);
+  #else
+  typedef int (*jitfunc2_t)(void*, addr2_t, addr2_t, addr2_t);
+  #endif
 #endif
 typedef struct tINSTR2 {
   jitfunc2_t fn;
@@ -458,6 +462,8 @@ extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
 extern void (*jit_main_loop)(_corefun0);
 extern void load1(WARRIOR*, LINE*);
 extern void load2(WARRIOR*, LINE*);
+extern jitfunc2_t compile_instr(INSTR1);
+void compile_jit_main_loop();
 //Global for all threads
 extern void initialize(void);
 extern void finalize(void);

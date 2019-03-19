@@ -1,6 +1,6 @@
 CC = gcc
 SRC_DIR = src
-OBJ = main.o simulate.o load.o parser.o debug.o entropy.o
+OBJ = main.o simulate.o load.o jit.o parser.o debug.o entropy.o
 LIB = $(JIT_LIB) -pthread -lm
 JIT_LIB = -L/usr/local/lib64 -ljit -Wl,-rpath=/usr/local/lib64
 SDL_LIB = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
