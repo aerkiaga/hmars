@@ -492,4 +492,6 @@ extern void destroy_coreview(COREVIEW*);
 extern void compile_instr(INSTR1);
 extern void compile_jit_all(void);
 extern void jit_invalidate(void);
+extern void hasht_reset(void);
+extern void jit_clear(void);
 #endif

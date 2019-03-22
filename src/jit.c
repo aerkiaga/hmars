@@ -204,7 +204,7 @@ void compile_instr(INSTR1 c1_c) {
   jit_type_t signature_sts_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_uint, jit_type_addr2, jit_type_addr2, jit_type_void_ptr}, 4, 1);
   #endif
   #endif
-  jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
+  //jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
 
   jit_value_t local_core_jit, core2, pc, a, b;
   #ifdef LIBJIT_NESTING
@@ -2203,5 +2203,21 @@ void jit_invalidate() {
   if(jit_main_loop == NULL) return;
   jit_context_destroy(jit_context);
   jit_main_loop = NULL;
+  return;
+}
+
+void hasht_reset() {
+  int c; for(c = 0; c < 64; ++c) g_data2.hasht[c].in = -2;
+  return;
+}
+
+void jit_clear() {
+  g_data2.nentr = g_data2.allocd = 0;
+  g_data2.curhpos = -1;
+  if(g_data2.oma != NULL) free(g_data2.oma), g_data2.oma = NULL;
+
+  hasht_reset();
+
+  if(jit_main_loop != NULL) jit_context_destroy(jit_context), (jit_main_loop = NULL), jit_context = NULL;
   return;
 }

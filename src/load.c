@@ -735,15 +735,13 @@ void initialize() {
   entropy_getbytes(&randomstateB, 8);
   pcg32_srandom_r(&randomgen, randomstateA, randomstateB);
 
-  jit_init();
-
-  int c; for(c = 0; c < 64; ++c) g_data2.hasht[c].in = -2;
-
   #if defined(TSAFE_CORE) && PSPACESIZE
   minit(mutex_pwarriors);
   #endif
 
   if((algorithm_select >> 2) & 1) { //add _hardcoded_dat to instruction list
+    jit_init();
+    hasht_reset();
     instr1to2(0);
     jit_invalidate();
   }
@@ -755,7 +753,7 @@ void finalize() {
   signal_terminate();
   #endif
 
-  jit_context_destroy(jit_context);
+  jit_clear();
 
   #if defined(TSAFE_CORE) && PSPACESIZE
   mdestroy(mutex_pwarriors);
