@@ -467,8 +467,6 @@ extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
 extern void (*jit_main_loop)(_corefun0);
 extern void load1(WARRIOR*, LINE*);
 extern void load2(WARRIOR*, LINE*);
-extern void compile_instr(INSTR1);
-void compile_jit_main_loop();
 //Global for all threads
 extern void initialize(void);
 extern void finalize(void);
@@ -488,4 +486,7 @@ extern void set_coreview_target(COREVIEW*, unsigned int, ...);
 extern void set_core_runmode(LOCAL_CORE*, unsigned int, unsigned int);
 extern void set_coreview_runmode(COREVIEW*, unsigned int, unsigned int);
 extern void destroy_coreview(COREVIEW*);
+extern void compile_instr(INSTR1);
+extern void compile_jit_all(void);
+extern void jit_invalidate(void);
 #endif

@@ -2049,6 +2049,7 @@ void simulate2(_corefun0) {
   #endif
 
   //run in a loop
+  if(jit_main_loop == NULL) compile_jit_all();
   jit_main_loop(_corecal0);
 
   #if defined(TSAFE_CORE) && PSPACESIZE

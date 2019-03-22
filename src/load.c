@@ -25,7 +25,6 @@ int algorithm_select = 6; // 1 and 2
 #else
 int algorithm_select = 6; // only 2
 #endif
-jit_context_t jit_context;
 #if defined(TSAFE_CORE) && PSPACESIZE
 extern MUTEX mutex_pwarriors;
 #endif
@@ -247,54 +246,52 @@ void load1(WARRIOR* w, LINE* txt) { //is used by load2
   return;
 }
 
-typedef struct tDATA2_ELEM {
-  jitfunc2_t fn;
-  uint32_t oma;
-} DATA2_ELEM;
+DATA2 g_data2 = {{{-2, 0}}, 0, 0, NULL, -1};
 
-struct {
-  DATA2_ELEM hasht[64];
-  int nentr;
-  int allocd;
-  DATA2_ELEM* list;
-  int curhpos;
-}
-  g_data2 = {{{NULL, 0}}, 0, 0, NULL, -1};
-
-jitfunc2_t instr1to2(uint32_t oma) {
+jitind_t instr1to2(uint32_t oma) {
   INSTR1 i;
   i._OMA = oma;
 
   uint8_t hash = i._O ^ i._M ^ i._aA ^ i._aB;
-  if(g_data2.hasht[hash].fn == NULL) { //hash table miss
+  hash &= 0x3F;
+  if(g_data2.hasht[hash].in == -2) { //hash table miss
     g_data2.hasht[hash].oma = i._OMA;
-    g_data2.curhpos = hash; //set .fn later
-    goto _nocallback;
+    g_data2.curhpos = hash; //set .in later
+    goto _noindex;
   }
-  else if(g_data2.hasht[hash].fn == (jitfunc2_t)-1) { //hash table collision
+  else if(g_data2.hasht[hash].in == -1) { //hash table collision
     int c;
     for(c = 0; c < g_data2.nentr; ++c) {
-      if(g_data2.list[c].oma == i._OMA) return g_data2.list[c].fn;
+      if(g_data2.list[c].oma == i._OMA) return g_data2.list[c].in;
     }
     g_data2.curhpos = -1; //don't bother about hash table
-    goto _nocallback;
+    goto _noindex;
   }
   else { //hash table hit
     if(g_data2.hasht[hash].oma == i._OMA) { //correct element
-      return g_data2.hasht[hash].fn;
+      return g_data2.hasht[hash].in;
     }
     else { //must add new
-      g_data2.hasht[hash].fn = (jitfunc2_t)-1; //now there's a collision
+      g_data2.hasht[hash].in = -1; //now there's a collision
       g_data2.curhpos = -1; //don't bother about hash table
-      goto _nocallback;
+      goto _noindex;
     }
   }
-  _nocallback:
+  _noindex:
+  ;
+  jitind_t r = g_data2.nentr;
+
   ++g_data2.nentr; //no callback registered, add new
+  jit_invalidate();
   if(g_data2.nentr > g_data2.allocd) g_data2.allocd += 16;
   g_data2.list = (DATA2_ELEM*) realloc(g_data2.list, g_data2.allocd * sizeof(DATA2_ELEM));
   g_data2.list[g_data2.nentr-1].oma = oma;
-  return NULL;
+
+  g_data2.list[g_data2.nentr-1].in = r;
+  if(g_data2.curhpos != -1) {
+    g_data2.hasht[g_data2.curhpos].in = r;
+  }
+  return r;
 }
 
 void load2(WARRIOR* w, LINE* txt) {
@@ -314,28 +311,15 @@ void load2(WARRIOR* w, LINE* txt) {
   int warning_pct_given = 0;
   #endif
   //JIT compiler
-  jit_context_build_start(jit_context);
 
   unsigned int c;
   for(c = 0; c < w->len; ++c) {
     INSTR2 i2;
-    i2.fn = instr1to2(c1[c]._OMA); //only translates if duplicate
+    i2.in = instr1to2(c1[c]._OMA); //only translates if duplicate
     i2.a = c1[c]._A; //this limits field width to to 15 bits
     i2.b = c1[c]._B;
-    if(i2.fn != NULL) {
-      w->code2[c] = i2;
-    }
-    else { //non-duplicate, must compile
-      jitfunc2_t r = compile_instr(c1[c]);
-      i2.fn = r;
-      g_data2.list[g_data2.nentr-1].fn = r;
-      if(g_data2.curhpos != -1) {
-        g_data2.hasht[g_data2.curhpos].fn = r;
-      }
-    }
     w->code2[c] = i2;
   }
-  jit_context_build_end(jit_context);
 
   if(w->code1 == NULL) free(c1); //free if not from w
   return;
@@ -751,8 +735,6 @@ void initialize() {
   pcg32_srandom_r(&randomgen, randomstateA, randomstateB);
 
   jit_init();
-  jit_context = jit_context_create();
-  compile_jit_main_loop();
 
   #if defined(TSAFE_CORE) && PSPACESIZE
   minit(mutex_pwarriors);
@@ -760,12 +742,13 @@ void initialize() {
 
   if((algorithm_select >> 2) & 1) { //add _hardcoded_dat to instruction list
     g_data2.hasht[0].oma = 0;
-    g_data2.hasht[0].fn = (jitfunc2_t) _hardcoded_dat;
+    g_data2.hasht[0].in = (jitind_t) 0;
     ++g_data2.nentr;
+    jit_invalidate();
     if(g_data2.nentr > g_data2.allocd) g_data2.allocd += 16;
     g_data2.list = (DATA2_ELEM*) realloc(g_data2.list, g_data2.allocd * sizeof(DATA2_ELEM));
     g_data2.list[g_data2.nentr-1].oma = 0;
-    g_data2.list[g_data2.nentr-1].fn = (jitfunc2_t) _hardcoded_dat;
+    g_data2.list[g_data2.nentr-1].in = (jitind_t) 0;
   }
   return;
 }
