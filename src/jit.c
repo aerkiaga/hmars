@@ -68,6 +68,7 @@ int remove_proc_jit(_corefun0) { //returns 1 if battle ends, 0 otherwise
   }
   return 0;
 }
+
 #ifdef TSAFE_CORE
 #define REMOVE_PROC_JIT() jit_insn_store(function, jit_locals.r, jit_insn_call_native(function, NULL, remove_proc_jit, signature_remove_proc_jit, (jit_value_t[]){local_core_jit}, 1, JIT_CALL_NOTHROW)); jit_insn_branch(function, &jit_locals.after);
 #else
@@ -170,6 +171,10 @@ jit_type_t compile_jit_type_proc2() {
   return jit_type_create_struct(fields3, 3, 1);
 }
 
+void _Noreturn jit_error(char* str) {
+  error(str);
+}
+
 void compile_instr(INSTR1 c1_c) {
   //jit_insn_mark_breakpoint (function, jit_nint data1, jit_nint data2)
 
@@ -199,6 +204,7 @@ void compile_instr(INSTR1 c1_c) {
   jit_type_t signature_sts_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_uint, jit_type_addr2, jit_type_addr2, jit_type_void_ptr}, 4, 1);
   #endif
   #endif
+  jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
 
   jit_value_t local_core_jit, core2, pc, a, b;
   #ifdef LIBJIT_NESTING
@@ -222,6 +228,9 @@ void compile_instr(INSTR1 c1_c) {
       b = jit_value_get_param(function, 3);
     #endif
   #endif
+
+  /*jit_value_t stsargs[] = {local_core_jit, JIT_CONST(M_I, jit_type_uint), a, b, JIT_INSTR2_in_L(JIT_CORE2_L(pc))};
+  jit_insn_call_native(function, "sts_jit", sts_jit, signature_sts_jit, stsargs, 5, 0);*/ //D
 
   jit_value_t w_addr = JIT_W_ADDR();
 
@@ -2112,11 +2121,12 @@ void compile_jit_all() {
   jit_value_t local_core_jit = JIT_CONST(local_core, jit_type_void_ptr);
   #endif
 
-  #ifdef TSAFE_CORE
+  jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
+  /*#ifdef TSAFE_CORE
   jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
   #else
   jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, NULL, 0, 1);
-  #endif
+  #endif*/
   jit_value_t core2 = jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr);
 
   jit_label_t labelendbattle = jit_label_undefined;
@@ -2157,12 +2167,16 @@ void compile_jit_all() {
       jit_locals.after = jit_label_undefined;
 
       jit_insn_jump_table(function, in, jtable, g_data2.nentr);
-      //illegal instruction
-      REMOVE_PROC_JIT();
+
+      //unknown instruction index
+      jit_value_t msg = JIT_CONST("JIT code found unknown instruction.", jit_type_void_ptr);
+      jit_insn_call_native(function, "jit_error", jit_error, signature_jit_error, &msg, 1, JIT_CALL_NORETURN | JIT_CALL_NOTHROW);
+
       for(k = 0; k < g_data2.nentr; ++k) {
         jit_insn_label(function, &jtable[k]);
         INSTR1 i1;
-        i1._OMA = g_data2.hasht[k].oma;
+        i1._OMA = g_data2.oma[k];
+
         compile_instr(i1);
         jit_insn_branch(function, &jit_locals.after);
       }
@@ -2186,6 +2200,7 @@ void compile_jit_all() {
 }
 
 void jit_invalidate() {
+  if(jit_main_loop == NULL) return;
   jit_context_destroy(jit_context);
   jit_main_loop = NULL;
   return;

@@ -58,6 +58,9 @@ extern unsigned int WARRIORS;
 #define COMPILER_HINT(x) /*do {if(!(x)) puts("Assertion failed: " ## x); abort(2);} while(0)*/;
 #define HINT_UNREACHABLE() ;
 #endif
+#define __TOSTR2(x) #x
+#define __TOSTR(x) __TOSTR2(x)
+#define __LINE_STR __TOSTR(__LINE__)
 
 #if CORESIZE <= 2
 #error "CORESIZE must be at least 3."
@@ -424,7 +427,7 @@ typedef struct tDATA2 {
   DATA2_ELEM hasht[64];
   int nentr;
   int allocd;
-  DATA2_ELEM* list;
+  uint32_t* oma;
   int curhpos;
 } DATA2;
 
@@ -453,7 +456,7 @@ typedef struct tCOREVIEW {
 #endif
 
 //Thread-local
-extern void error(const char*, ...);
+extern void _Noreturn error(const char*, ...);
 extern unsigned int battle1_single(unsigned long); //single-thread, blocking
 extern unsigned int battle2_single(unsigned long); //single-thread, blocking
 extern void battle1_multithread(unsigned long, unsigned int); //multithread, blocking

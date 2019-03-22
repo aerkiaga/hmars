@@ -262,7 +262,7 @@ jitind_t instr1to2(uint32_t oma) {
   else if(g_data2.hasht[hash].in == -1) { //hash table collision
     int c;
     for(c = 0; c < g_data2.nentr; ++c) {
-      if(g_data2.list[c].oma == i._OMA) return g_data2.list[c].in;
+      if(g_data2.oma[c] == i._OMA) return c;
     }
     g_data2.curhpos = -1; //don't bother about hash table
     goto _noindex;
@@ -283,11 +283,12 @@ jitind_t instr1to2(uint32_t oma) {
 
   ++g_data2.nentr; //no callback registered, add new
   jit_invalidate();
-  if(g_data2.nentr > g_data2.allocd) g_data2.allocd += 16;
-  g_data2.list = (DATA2_ELEM*) realloc(g_data2.list, g_data2.allocd * sizeof(DATA2_ELEM));
-  g_data2.list[g_data2.nentr-1].oma = oma;
+  if(g_data2.nentr > g_data2.allocd) {
+    g_data2.allocd += 16;
+    g_data2.oma = (uint32_t*) realloc(g_data2.oma, g_data2.allocd * sizeof(DATA2_ELEM));
+  }
+  g_data2.oma[g_data2.nentr-1] = oma;
 
-  g_data2.list[g_data2.nentr-1].in = r;
   if(g_data2.curhpos != -1) {
     g_data2.hasht[g_data2.curhpos].in = r;
   }
@@ -736,19 +737,15 @@ void initialize() {
 
   jit_init();
 
+  int c; for(c = 0; c < 64; ++c) g_data2.hasht[c].in = -2;
+
   #if defined(TSAFE_CORE) && PSPACESIZE
   minit(mutex_pwarriors);
   #endif
 
   if((algorithm_select >> 2) & 1) { //add _hardcoded_dat to instruction list
-    g_data2.hasht[0].oma = 0;
-    g_data2.hasht[0].in = (jitind_t) 0;
-    ++g_data2.nentr;
+    instr1to2(0);
     jit_invalidate();
-    if(g_data2.nentr > g_data2.allocd) g_data2.allocd += 16;
-    g_data2.list = (DATA2_ELEM*) realloc(g_data2.list, g_data2.allocd * sizeof(DATA2_ELEM));
-    g_data2.list[g_data2.nentr-1].oma = 0;
-    g_data2.list[g_data2.nentr-1].in = (jitind_t) 0;
   }
   return;
 }
