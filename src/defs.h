@@ -254,17 +254,9 @@ typedef union t_INSTR1 {
 typedef uint32_t addr2_t;
 #define jit_type_addr2 jit_type_uint
 #define jit_type_addr2s jit_type_int
-#ifdef LIBJIT_NESTING
-  typedef void* jitfunc2_t; //only callable from JIT main loop
-#else
-  #ifdef TSAFE_CORE
-  typedef int (*jitfunc2_t)(void*, void*, addr2_t, addr2_t, addr2_t);
-  #else
-  typedef int (*jitfunc2_t)(void*, addr2_t, addr2_t, addr2_t);
-  #endif
-#endif
+typedef int_fast32_t jitind_t;
 typedef struct tINSTR2 {
-  jitfunc2_t fn;
+  jitind_t in;
   addr2_t a, b;
 } INSTR2;
 
@@ -423,6 +415,19 @@ typedef struct t_LOCAL_CORE {
 #define l_hook_lastw_ordered local_core->l_hook_lastw_ordered
 #define l_w2 local_core->la_w2 //different alias for standalone member use
 
+typedef struct tDATA2_ELEM {
+  jitind_t in;
+  uint32_t oma;
+} DATA2_ELEM;
+
+typedef struct tDATA2 {
+  DATA2_ELEM hasht[64];
+  int nentr;
+  int allocd;
+  DATA2_ELEM* list;
+  int curhpos;
+} DATA2;
+
 #ifdef _COREVIEW_
 typedef struct tCOREVIEW {
   LOCAL_CORE* local_core;
@@ -462,7 +467,7 @@ extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
 extern void (*jit_main_loop)(_corefun0);
 extern void load1(WARRIOR*, LINE*);
 extern void load2(WARRIOR*, LINE*);
-extern jitfunc2_t compile_instr(INSTR1);
+extern void compile_instr(INSTR1);
 void compile_jit_main_loop();
 //Global for all threads
 extern void initialize(void);

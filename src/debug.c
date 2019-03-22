@@ -589,6 +589,6 @@ void debug_println1(uint64_t i) {
 }
 
 void debug_println2(INSTR2 I) {
-  printf("%-*p %d,\t%d\n", (int) sizeof(void*) * 2, I.fn, I.a, I.b);
+  printf("%-*ld %d,\t%d\n", (int) sizeof(jitind_t) * 2, I.in, I.a, I.b);
   return;
 }

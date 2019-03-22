@@ -2078,7 +2078,7 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
   for(cround = 0; cround < nrounds; ++cround) {
     unsigned long c;
     for(c = 0; c < CORESIZE; ++c) {
-      l_core2[c].fn = (jitfunc2_t) _hardcoded_dat;
+      l_core2[c].in = (jitind_t) 0; //hardcoded DAT
       l_core2[c].a = 0;
       l_core2[c].b = 0;
     }

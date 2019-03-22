@@ -70,7 +70,7 @@ void print_offending_code() {
   int c;
   for(c = 0; c < warriors[0].len; ++c) {
     if(warriors[0].code2 != NULL) {
-      printf("%-*p ", (int) sizeof(void*) * 2, warriors[0].code2[c].fn);
+      printf("%-*ld ", (int) sizeof(jitind_t) * 2, warriors[0].code2[c].in);
     }
     debug_println1(warriors[0].code1[c]._I);
   }
