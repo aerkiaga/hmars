@@ -112,9 +112,15 @@ void mlock_helper_jit() {
 #ifdef O_STS
 void sts_jit(_corefunc uint8_t mode, addr2_t v1/*a*/, addr2_t v2/*b*/, jitind_t vi) {
   switch(mode) {
-    case M_I:
-      printf("%s: %ld\t%d\t%d\n", warriors[l_indices[l_w2]].name, vi, (int)v1, (int)v2);
+    case M_I: {
+      printf("%s: ", warriors[l_indices[l_w2]].name);
+      INSTR1 I;
+      I._A = v1;
+      I._B = v2;
+      I._OMA = g_data2.oma[vi];
+      debug_println1(I._I);
       break;
+    }
     case M_A: case M_AB:
       printf("%s: %d\n", warriors[l_indices[l_w2]].name, (int)v1);
       break;
