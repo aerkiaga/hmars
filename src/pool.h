@@ -30,10 +30,6 @@
   PROC1** l_pool_fbase_proc1; \
   PROC1** l_pool_ftop_proc1; //actually points over the top for performance reasons
 
-#ifndef TSAFE_CORE
-POOL_PROC1_GLOBALS()
-#endif
-
 #define alloc_pool_proc1() *(--l_pool_ftop_proc1)
 
 #define free_pool_proc1(ptr) *(l_pool_ftop_proc1++) = ptr;
@@ -68,10 +64,6 @@ POOL_PROC1_GLOBALS()
   PROC2* l_pool_proc2; \
   PROC2** l_pool_fbase_proc2; \
   PROC2** l_pool_ftop_proc2; //actually points over the top for performance reasons
-
-#ifndef TSAFE_CORE
-POOL_PROC2_GLOBALS()
-#endif
 
 #define alloc_pool_proc2() *(--l_pool_ftop_proc2)
 

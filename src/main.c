@@ -156,9 +156,7 @@ int self_test() {
   free(warriors[0].pspace);
   warriors[0].pspace = NULL;
   #endif
-  #ifdef TSAFE_CORE
   mdestroy(warriors[0].mutex);
-  #endif
 
   printf("wins: %d / 10000\n", wins);
   puts("PASSED!");

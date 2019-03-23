@@ -25,7 +25,7 @@ int algorithm_select = 6; // 1 and 2
 #else
 int algorithm_select = 6; // only 2
 #endif
-#if defined(TSAFE_CORE) && PSPACESIZE
+#if PSPACESIZE
 extern MUTEX mutex_pwarriors;
 #endif
 
@@ -550,12 +550,8 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
       warriors[c].pspace = calloc(PSPACESIZE, sizeof(pcell_t));
     #endif
 
-    #ifdef TSAFE_CORE
     minit(warriors[c].mutex);
-    #endif
   }
-
-  /******** END OF IT ********/
 
   //Generate a color for each warrior
   #ifdef _COREVIEW_
@@ -679,9 +675,7 @@ void unload_warrior(int c) {
   if(!check) free(warriors[c].pspace);
   warriors[c].pspace = NULL;
   #endif
-  #ifdef TSAFE_CORE
   mdestroy(warriors[c].mutex);
-  #endif
   return;
 }
 
@@ -717,9 +711,7 @@ void init_warrior(WARRIOR* w) {
   #if PSPACESIZE
   w->pspace = malloc(PSPACESIZE * sizeof(pcell_t));
   #endif
-  #ifdef TSAFE_CORE
   minit(w->mutex);
-  #endif
   reset_warrior(w);
   return;
 }
@@ -735,7 +727,7 @@ void initialize() {
   entropy_getbytes(&randomstateB, 8);
   pcg32_srandom_r(&randomgen, randomstateA, randomstateB);
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   minit(mutex_pwarriors);
   #endif
 
@@ -755,7 +747,7 @@ void finalize() {
 
   jit_clear();
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   mdestroy(mutex_pwarriors);
   #endif
 

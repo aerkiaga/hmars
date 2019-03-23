@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifdef TSAFE_CORE
-
 #define TM_NEED_THREAD
 
 #if defined(unix) || defined(__unix__) || defined(__unix)
@@ -105,5 +103,3 @@ typedef void* _TPROC_TYPE;
 #define csignal(c) pthread_cond_signal(&c)
 #define cdestroy(c) pthread_cond_destroy(&c)
 #endif
-
-#endif //TSAFE_CORE

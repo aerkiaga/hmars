@@ -19,13 +19,9 @@
 #include "defs.h"
 #include "multithread.h"
 
-#ifndef TSAFE_CORE
-LOCAL_CORE g_local_core;
-#endif
-
 //GLOBALS
 WARRIOR* warriors;
-#if defined(TSAFE_CORE) && PSPACESIZE
+#if PSPACESIZE
 MUTEX mutex_pwarriors;
 #endif
 int terminating = 0;
@@ -504,7 +500,7 @@ void simulate1(_corefun0) {
   memset(l_isPCT, 0, CORESIZE * sizeof(uint_fast8_t)); //unprotected
   #endif
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   l_pspace_local_accessed = 0;
   #endif
 
@@ -1590,12 +1586,10 @@ void simulate1(_corefun0) {
         #endif
         #ifdef O_LDP
         case O_LDP:
-          #ifdef TSAFE_CORE
           if(!l_pspace_local_accessed) {
             mlock(mutex_pwarriors);
             l_pspace_local_accessed = 1;
           }
-          #endif
           #ifdef HOOK_ONWRITE
           switch(I._M) {
             case M_A: hook_onwrite_A(_corecall bp, hook_onpread(w, ai._A % PSPACESIZE)); break;
@@ -1618,12 +1612,10 @@ void simulate1(_corefun0) {
         #endif
         #ifdef O_STP
         case O_STP: {
-          #ifdef TSAFE_CORE
           if(!l_pspace_local_accessed) {
             mlock(mutex_pwarriors);
             l_pspace_local_accessed = 1;
           }
-          #endif
           int16_t pos;
           switch(I._M) {
             case M_A:
@@ -1801,7 +1793,7 @@ void simulate1(_corefun0) {
   }
   _label_endbattle:
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);
   #endif
   #ifdef _COREVIEW_
@@ -1843,9 +1835,7 @@ unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number 
     simulate1(_corecal0);
     unsigned long c;
     for(c = 0; c < WARRIORS; ++c) {
-      #ifdef TSAFE_CORE
       mlock(warriors[c].mutex);
-      #endif
       if(l_running[c]) {
         if(l_nrunning > 1) {
           warriors[c].ties++;
@@ -1855,30 +1845,20 @@ unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number 
         }
         warriors[c].score += (WARRIORS*WARRIORS-1)/l_nrunning;
         #if PSPACESIZE
-        #ifdef TSAFE_CORE
         mlock(mutex_pwarriors);
-        #endif
         warriors[c].psp0 = l_nrunning;
-        #ifdef TSAFE_CORE
         munlock(mutex_pwarriors);
-        #endif
         #endif
       }
       else {
         warriors[c].losses++;
         #if PSPACESIZE
-        #ifdef TSAFE_CORE
         mlock(mutex_pwarriors);
-        #endif
         warriors[c].psp0 = 0;
-        #ifdef TSAFE_CORE
         munlock(mutex_pwarriors);
         #endif
-        #endif
       }
-      #ifdef TSAFE_CORE
       munlock(warriors[c].mutex);
-      #endif
     }
 
     #ifdef _COREVIEW_
@@ -1902,9 +1882,7 @@ unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number 
 }
 
 unsigned int inline battle1_single(unsigned long nrounds) { //returns actual number of rounds
-  #ifdef TSAFE_CORE
   LOCAL_CORE* local_core = malloc(sizeof(LOCAL_CORE));
-  #endif
   #ifdef _COREVIEW_
   minit(l_mutex_exec);
   minit(l_mutex_mode);
@@ -1914,13 +1892,10 @@ unsigned int inline battle1_single(unsigned long nrounds) { //returns actual num
 
   unsigned int r = battle1(_corecall nrounds);
 
-  #ifdef TSAFE_CORE
   free(local_core);
-  #endif
   return r;
 }
 
-#ifdef TSAFE_CORE
 _TPROC_TYPE tproc_battle1(void* pnrounds) {
   battle1_single(*(unsigned long*) pnrounds);
   _TPROC_RET();
@@ -1942,7 +1917,6 @@ void battle1_multithread(unsigned long nrounds, unsigned int nthreads) {
   }
   return;
 }
-#endif
 
 #ifdef _COREVIEW_
 
@@ -2044,7 +2018,7 @@ void simulate2(_corefun0) {
     l_indices[c2] = tmp2;
   }
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   l_pspace_local_accessed = 0;
   #endif
 
@@ -2052,7 +2026,7 @@ void simulate2(_corefun0) {
   if(jit_main_loop == NULL) compile_jit_all();
   jit_main_loop(_corecal0);
 
-  #if defined(TSAFE_CORE) && PSPACESIZE
+  #if PSPACESIZE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);
   #endif
   //clear process queues
@@ -2085,9 +2059,7 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
     }
     simulate2(_corecal0);
     for(c = 0; c < WARRIORS; ++c) {
-      #ifdef TSAFE_CORE
       mlock(warriors[c].mutex);
-      #endif
       if(l_running[c]) {
         if(l_nrunning > 1) {
           warriors[c].ties++;
@@ -2097,30 +2069,20 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
         }
         warriors[c].score += (WARRIORS*WARRIORS-1)/l_nrunning;
         #if PSPACESIZE
-        #ifdef TSAFE_CORE
         mlock(mutex_pwarriors);
-        #endif
         warriors[c].psp0 = l_nrunning;
-        #ifdef TSAFE_CORE
         munlock(mutex_pwarriors);
-        #endif
         #endif
       }
       else {
         warriors[c].losses++;
         #if PSPACESIZE
-        #ifdef TSAFE_CORE
         mlock(mutex_pwarriors);
-        #endif
         warriors[c].psp0 = 0;
-        #ifdef TSAFE_CORE
         munlock(mutex_pwarriors);
         #endif
-        #endif
       }
-      #ifdef TSAFE_CORE
       munlock(warriors[c].mutex);
-      #endif
     }
   }
   free(l_core2);
@@ -2134,15 +2096,11 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
 }
 
 unsigned int inline battle2_single(unsigned long nrounds) { //returns actual number of rounds
-  #ifdef TSAFE_CORE
   LOCAL_CORE* local_core = malloc(sizeof(LOCAL_CORE));
-  #endif
 
   unsigned int r = battle2(_corecall nrounds);
 
-  #ifdef TSAFE_CORE
   free(local_core);
-  #endif
   return r;
 }
 

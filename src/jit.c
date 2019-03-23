@@ -69,11 +69,7 @@ int remove_proc_jit(_corefun0) { //returns 1 if battle ends, 0 otherwise
   return 0;
 }
 
-#ifdef TSAFE_CORE
 #define REMOVE_PROC_JIT() jit_insn_store(function, jit_locals.r, jit_insn_call_native(function, NULL, remove_proc_jit, signature_remove_proc_jit, (jit_value_t[]){local_core_jit}, 1, JIT_CALL_NOTHROW)); jit_insn_branch(function, &jit_locals.after);
-#else
-#define REMOVE_PROC_JIT() jit_insn_store(function, jit_locals.r, jit_insn_call_native(function, NULL, remove_proc_jit, signature_remove_proc_jit, NULL, 0, JIT_CALL_NOTHROW)); jit_insn_branch(function, &jit_locals.after);
-#endif
 #ifdef opt_SPL86
 void spl_jit(_corefun0, addr2_t bp) {
 #else
@@ -160,9 +156,7 @@ jit_type_t compile_jit_type_warrior(jit_type_t jit_type_pcell) {
     jit_type_void_ptr, jit_type_pcell, jit_type_sys_ulong, jit_type_sys_int,
   #endif
     jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint
-  #ifdef TSAFE_CORE
     , JIT_TYPE(MUTEX)
-  #endif
   #ifdef _COREVIEW_
     , jit_type_uint
   #endif
@@ -186,27 +180,15 @@ void compile_instr(INSTR1 c1_c) {
   jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
 
   jit_type_t jit_type_instr2 = compile_jit_type_instr2();
-  #ifdef TSAFE_CORE
   jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
-  #else
-  jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, NULL, 0, 1);
-  #endif
   #ifdef O_SPL
-  #ifdef TSAFE_CORE
   jit_type_t signature_spl_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr, jit_type_addr2}, 2, 1);
-  #else
-  jit_type_t signature_spl_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_addr2}, 1, 1);
-  #endif
   #endif
   jit_type_t signature_mlock_helper_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, NULL, 0, 1);
   jit_type_t jit_type_pcell = JIT_TYPE(pcell_t);
   jit_type_t jit_type_warrior = compile_jit_type_warrior(jit_type_pcell);
   #ifdef O_STS
-  #ifdef TSAFE_CORE
   jit_type_t signature_sts_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr, jit_type_uint, jit_type_addr2, jit_type_addr2, jit_type_void_ptr}, 5, 1);
-  #else
-  jit_type_t signature_sts_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_uint, jit_type_addr2, jit_type_addr2, jit_type_void_ptr}, 4, 1);
-  #endif
   #endif
   //jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
 
@@ -1782,11 +1764,7 @@ void compile_instr(INSTR1 c1_c) {
         #else
         jit_value_t xp = ap;
         #endif
-        #ifdef TSAFE_CORE
         jit_insn_call_native(function, NULL, spl_jit, signature_spl_jit, (jit_value_t[]){local_core_jit, xp}, 2, JIT_CALL_NOTHROW);
-        #else
-        jit_insn_call_native(function, NULL, spl_jit, signature_spl_jit, (jit_value_t[]){xp}, 1, JIT_CALL_NOTHROW);
-        #endif
         jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
         jit_insn_branch(function, &jit_locals.after);
       jit_insn_label(function, &labele);
@@ -1806,13 +1784,11 @@ void compile_instr(INSTR1 c1_c) {
     #endif
     #ifdef O_LDP
     case O_LDP: {
-      #ifdef TSAFE_CORE
       jit_label_t labelb = jit_label_undefined;
       jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int)), &labelb);
         jit_insn_call_native(function, NULL, mlock_helper_jit, signature_mlock_helper_jit, NULL, 0, JIT_CALL_NOTHROW);
         jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), JIT_CONST(1, jit_type_sys_int));
       jit_insn_label(function, &labelb);
-      #endif
       switch(c1_c._M) {
         case M_A: {
           jit_value_t tmpx = ai_a;
@@ -1895,13 +1871,11 @@ void compile_instr(INSTR1 c1_c) {
     #endif
     #ifdef O_STP
     case O_STP: {
-      #ifdef TSAFE_CORE
       jit_label_t labelb = jit_label_undefined;
       jit_insn_branch_if_not(function, jit_insn_to_not_bool(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), jit_type_sys_int)), &labelb);
         jit_insn_call_native(function, NULL, mlock_helper_jit, signature_mlock_helper_jit, NULL, 0, JIT_CALL_NOTHROW);
         jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_pspace_local_accessed), JIT_CONST(1, jit_type_sys_int));
       jit_insn_label(function, &labelb);
-      #endif
       switch(c1_c._M) {
         case M_A: {
           jit_value_t tmpx = bi_a;
@@ -2016,7 +1990,6 @@ void compile_instr(INSTR1 c1_c) {
     #endif
     #ifdef O_STS
     case O_STS: {
-      #ifdef TSAFE_CORE
         switch(c1_c._M) {
           case M_I: {
             jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
@@ -2039,30 +2012,6 @@ void compile_instr(INSTR1 c1_c) {
               JIT_CONST(0, jit_type_void_ptr)}, 5, JIT_CALL_NOTHROW);
             break; }
         }
-      #else
-        switch(c1_c._M) {
-          case M_I: {
-            jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-              (jit_value_t[]){JIT_CONST(M_I, jit_type_uint), ai_a, ai_b,
-              JIT_INSTR2_in_L(JIT_CORE2_L(ap))}, 4, JIT_CALL_NOTHROW);
-            break; }
-          case M_A: case M_AB: {
-            jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-              (jit_value_t[]){JIT_CONST(c1_c._M, jit_type_ubyte), ai_a, JIT_CONST(0, jit_type_addr2),
-              JIT_CONST(0, jit_type_void_ptr)}, 4, JIT_CALL_NOTHROW);
-            break; }
-          case M_B: case M_BA: {
-            jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-              (jit_value_t[]){JIT_CONST(c1_c._M, jit_type_ubyte), JIT_CONST(0, jit_type_addr2), ai_b,
-              JIT_CONST(0, jit_type_void_ptr)}, 4, JIT_CALL_NOTHROW);
-            break; }
-          case M_F: case M_X: {
-            jit_insn_call_native(function, NULL, sts_jit, signature_sts_jit,
-              (jit_value_t[]){JIT_CONST(c1_c._M, jit_type_ubyte), ai_a, ai_b,
-              JIT_CONST(0, jit_type_void_ptr)}, 4, JIT_CALL_NOTHROW);
-            break; }
-        }
-      #endif
       break; }
     #endif
   }
@@ -2092,29 +2041,14 @@ void compile_jit_all() {
 
 
   jit_function_t function;
-  #ifdef TSAFE_CORE
   jit_type_t params[1] = {jit_type_void_ptr};
-  #endif
   jit_type_t signature;
-  #ifdef TSAFE_CORE
   signature = jit_type_create_signature(jit_abi_cdecl, jit_type_void, params, 1, 1);
-  #else
-  signature = jit_type_create_signature(jit_abi_cdecl, jit_type_void, NULL, 0, 1);
-  #endif
   function = jit_func_main_loop = jit_function_create(jit_context, signature);
 
-  #ifdef TSAFE_CORE
   jit_value_t local_core_jit = jit_value_get_param(function, 0);
-  #else
-  jit_value_t local_core_jit = JIT_CONST(local_core, jit_type_void_ptr);
-  #endif
 
   jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
-  /*#ifdef TSAFE_CORE
-  jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
-  #else
-  jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, NULL, 0, 1);
-  #endif*/
   jit_value_t core2 = jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr);
 
   jit_label_t labelendbattle = jit_label_undefined;

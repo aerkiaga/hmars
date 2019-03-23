@@ -36,12 +36,7 @@ typedef struct t_WARRIOR WARRIOR;
 #endif
 #define MULTITHREAD
 #endif
-#ifdef MULTITHREAD
-#define TSAFE_CORE
-#endif
-#ifdef TSAFE_CORE
 #include "multithread.h"
-#endif
 #ifdef _COREVIEW_
 #include "SDL2/SDL.h"
 #endif
@@ -203,18 +198,11 @@ typedef uint_fast16_t pcell_t;
 #endif
 #endif
 
-#ifdef TSAFE_CORE
 #define _corefunc LOCAL_CORE* local_core,
 #define _corefun0 LOCAL_CORE* local_core
 #define _COREMACR //add local_core parameter to avoid preprocessing errors
 #define _corecall local_core,
 #define _corecal0 local_core
-#else
-#define _corefunc
-#define _corefun0 void
-#define _corecall
-#define _corecal0
-#endif
 
 /*
 <xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx> (uint64_t)
@@ -280,9 +268,7 @@ struct t_WARRIOR {
   int haspin;
   #endif
   unsigned int score, wins, losses, ties;
-  #ifdef TSAFE_CORE
   MUTEX mutex;
-  #endif
   #ifdef _COREVIEW_
   uint32_t color; //l_coreviewdata warrior color
   #endif
@@ -370,18 +356,13 @@ typedef struct t_LOCAL_CORE {
   unsigned int l_runparam;
   int l_rundata;
   #endif
-  #ifdef TSAFE_CORE
   THREAD l_thread; //thread running core
   #if PSPACESIZE
   int la_pspace_local_accessed;
   #endif
-  #endif
   unsigned long l_hook_lastw_ordered; //ordered index of warrior executing current instruction
   unsigned long la_w2; //same, but unordered
 } LOCAL_CORE;
-#ifndef TSAFE_CORE
-#define local_core (&g_local_core)
-#endif
 #define l_core1 local_core->l_core1
 #define l_core2 local_core->la_core2
 #define l_positions local_core->l_positions
@@ -409,11 +390,9 @@ typedef struct t_LOCAL_CORE {
 #define l_runparam local_core->l_runparam
 #define l_rundata local_core->l_rundata
 #endif
-#ifdef TSAFE_CORE
 #define l_thread local_core->l_thread
 #if PSPACESIZE
 #define l_pspace_local_accessed local_core->la_pspace_local_accessed //different alias for standalone member use
-#endif
 #endif
 #define l_hook_lastw_ordered local_core->l_hook_lastw_ordered
 #define l_w2 local_core->la_w2 //different alias for standalone member use
