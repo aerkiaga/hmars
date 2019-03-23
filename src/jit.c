@@ -142,14 +142,12 @@ int _hardcoded_dat(_corefunc INSTR2* core2, addr2_t pc, addr2_t a, addr2_t b) { 
 void (*jit_main_loop)(_corefun0) = NULL;
 jit_function_t jit_func_main_loop;
 
-#ifdef LIBJIT_NESTING
 #warning "This is not thread-safe!"
 struct {
   jit_function_t function;
   jit_value_t local_core, pc, a, b, r;
   jit_label_t after;
 } jit_locals;
-#endif
 
 jit_type_t compile_jit_type_instr2() {
   jit_type_t fields[3] = {JIT_TYPE(int_fast32_t), jit_type_addr2, jit_type_addr2};
@@ -213,27 +211,11 @@ void compile_instr(INSTR1 c1_c) {
   //jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
 
   jit_value_t local_core_jit, core2, pc, a, b;
-  #ifdef LIBJIT_NESTING
     local_core_jit = jit_locals.local_core;
     core2 = jit_insn_load_relative(function, jit_locals.local_core, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr);
     pc = jit_locals.pc;
     a = jit_locals.a;
     b = jit_locals.b;
-  #else
-    #ifdef TSAFE_CORE
-      local_core_jit = jit_value_get_param(function, 0);
-      core2 = jit_value_get_param(function, 1);
-      pc = jit_value_get_param(function, 2);
-      a = jit_value_get_param(function, 3);
-      b = jit_value_get_param(function, 4);
-    #else
-      local_core_jit = JIT_CONST(local_core, jit_type_void_ptr);
-      core2 = jit_value_get_param(function, 0);
-      pc = jit_value_get_param(function, 1);
-      a = jit_value_get_param(function, 2);
-      b = jit_value_get_param(function, 3);
-    #endif
-  #endif
 
   /*jit_value_t stsargs[] = {local_core_jit, JIT_CONST(M_I, jit_type_uint), a, b, JIT_INSTR2_in_L(JIT_CORE2_L(pc))};
   jit_insn_call_native(function, "sts_jit", sts_jit, signature_sts_jit, stsargs, 5, 0);*/ //D
@@ -2142,14 +2124,12 @@ void compile_jit_all() {
   jit_value_t a = jit_value_create(function, jit_type_addr2);
   jit_value_t b = jit_value_create(function, jit_type_addr2);
 
-  #ifdef LIBJIT_NESTING
   jit_locals.function = function;
   jit_locals.local_core = local_core_jit;
   jit_locals.pc = pc;
   jit_locals.a = a;
   jit_locals.b = b;
   jit_locals.r = jit_value_create(function, jit_type_sys_int);
-  #endif
 
   jit_insn_store(function, c, JIT_CONST(0, jit_type_sys_ulong));
   jit_label_t labeloutstart = jit_label_undefined;
