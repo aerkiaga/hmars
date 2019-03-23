@@ -739,10 +739,10 @@ void initialize() {
   minit(mutex_pwarriors);
   #endif
 
-  if((algorithm_select >> 2) & 1) { //add _hardcoded_dat to instruction list
+  if((algorithm_select >> 2) & 1) {
     jit_init();
     hasht_reset();
-    instr1to2(0);
+    add_hdat();
     jit_invalidate();
   }
   return;

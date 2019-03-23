@@ -123,6 +123,7 @@ int self_test() {
     if(n % 1000 == 0) printf("Round %d (%f%% wins)\n", n, 100.0*wins/(n?:1)); //D
     load1(&warriors[0], loadt);
     test_crash_loaded = 1;
+    add_hdat();
     load2(&warriors[0], loadt);
 
     int w;
@@ -142,6 +143,7 @@ int self_test() {
       puts("FAILED!");
       return 1;
     }
+    jit_clear(); //get rid of all compiled code and translation data
     wins += w;
     test_crash_loaded = 0;
     free(warriors[0].code1);

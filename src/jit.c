@@ -2223,7 +2223,12 @@ void jit_clear() {
   if(g_data2.oma != NULL) free(g_data2.oma), g_data2.oma = NULL;
 
   hasht_reset();
+  jit_invalidate();
+  jit_context = NULL;
+  return;
+}
 
-  if(jit_main_loop != NULL) jit_context_destroy(jit_context), (jit_main_loop = NULL), jit_context = NULL;
+void add_hdat() {
+  instr1to2(0); //add hardcoded DAT
   return;
 }
