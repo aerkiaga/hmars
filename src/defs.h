@@ -58,6 +58,9 @@ extern unsigned int WARRIORS;
 #define COMPILER_HINT(x) /*do {if(!(x)) puts("Assertion failed: " ## x); abort(2);} while(0)*/;
 #define HINT_UNREACHABLE() ;
 #endif
+#define __TOSTR2(x) #x
+#define __TOSTR(x) __TOSTR2(x)
+#define __LINE_STR __TOSTR(__LINE__)
 
 #if CORESIZE <= 2
 #error "CORESIZE must be at least 3."
@@ -254,13 +257,9 @@ typedef union t_INSTR1 {
 typedef uint32_t addr2_t;
 #define jit_type_addr2 jit_type_uint
 #define jit_type_addr2s jit_type_int
-#ifdef TSAFE_CORE
-typedef int (*jitfunc2_t)(void*, void*, addr2_t, addr2_t, addr2_t);
-#else
-typedef int (*jitfunc2_t)(void*, addr2_t, addr2_t, addr2_t);
-#endif
+typedef int_fast32_t jitind_t;
 typedef struct tINSTR2 {
-  jitfunc2_t fn;
+  jitind_t in;
   addr2_t a, b;
 } INSTR2;
 
@@ -345,13 +344,13 @@ extern MUTEX mutex_commun_global;
 */
 typedef struct t_LOCAL_CORE {
   INSTR1* l_core1;
-  INSTR2* l_core2;
+  INSTR2* la_core2;
   PROC1** l_proc1; //unordered
   PROC2** la_proc2; //unordered
   uint16_t* l_positions; //ordered
   unsigned long* la_nprocs; //unordered
   unsigned long* l_indices; //maps unordered to ordered
-  unsigned long l_nrunning; //number of warriors that remain alive
+  unsigned long la_nrunning; //number of warriors that remain alive
   int* l_running; //whether they are alive (ordered)
   #ifdef O_PCT
   uint_fast8_t l_isPCT[CORESIZE];
@@ -384,13 +383,13 @@ typedef struct t_LOCAL_CORE {
 #define local_core (&g_local_core)
 #endif
 #define l_core1 local_core->l_core1
-#define l_core2 local_core->l_core2
+#define l_core2 local_core->la_core2
 #define l_positions local_core->l_positions
 #define l_proc1 local_core->l_proc1
 #define l_proc2 local_core->la_proc2 //different alias for standalone member use
 #define l_nprocs local_core->la_nprocs //different alias for standalone member use
 #define l_indices local_core->l_indices
-#define l_nrunning local_core->l_nrunning
+#define l_nrunning local_core->la_nrunning
 #define l_running local_core->l_running
 #define l_pool_proc1 local_core->l_pool_proc1
 #define l_pool_fbase_proc1 local_core->l_pool_fbase_proc1
@@ -419,6 +418,19 @@ typedef struct t_LOCAL_CORE {
 #define l_hook_lastw_ordered local_core->l_hook_lastw_ordered
 #define l_w2 local_core->la_w2 //different alias for standalone member use
 
+typedef struct tDATA2_ELEM {
+  jitind_t in;
+  uint32_t oma;
+} DATA2_ELEM;
+
+typedef struct tDATA2 {
+  DATA2_ELEM hasht[64];
+  int nentr;
+  int allocd;
+  uint32_t* oma;
+  int curhpos;
+} DATA2;
+
 #ifdef _COREVIEW_
 typedef struct tCOREVIEW {
   LOCAL_CORE* local_core;
@@ -444,7 +456,7 @@ typedef struct tCOREVIEW {
 #endif
 
 //Thread-local
-extern void error(const char*, ...);
+extern void _Noreturn error(const char*, ...);
 extern unsigned int battle1_single(unsigned long); //single-thread, blocking
 extern unsigned int battle2_single(unsigned long); //single-thread, blocking
 extern void battle1_multithread(unsigned long, unsigned int); //multithread, blocking
@@ -455,6 +467,7 @@ extern void debug_println2(INSTR2);
 extern void signal_terminate(void);
 extern int check_terminate(void);
 extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);
+extern void (*jit_main_loop)(_corefun0);
 extern void load1(WARRIOR*, LINE*);
 extern void load2(WARRIOR*, LINE*);
 //Global for all threads
@@ -476,4 +489,11 @@ extern void set_coreview_target(COREVIEW*, unsigned int, ...);
 extern void set_core_runmode(LOCAL_CORE*, unsigned int, unsigned int);
 extern void set_coreview_runmode(COREVIEW*, unsigned int, unsigned int);
 extern void destroy_coreview(COREVIEW*);
+extern void compile_instr(INSTR1);
+extern void compile_jit_all(void);
+extern void jit_invalidate(void);
+extern void hasht_reset(void);
+extern void jit_clear(void);
+extern void add_hdat(void);
+extern jitind_t instr1to2(uint32_t);
 #endif

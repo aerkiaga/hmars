@@ -1819,11 +1819,11 @@ void simulate1(_corefun0) {
 unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number of rounds
   unsigned int cround;
   l_core1 = malloc(CORESIZE * sizeof(INSTR1));
-  l_positions = malloc(WARRIORS * 2);
-  l_proc1 = malloc(CORESIZE * sizeof(PROC1*));
-  l_nprocs = malloc(CORESIZE * sizeof(unsigned long));
-  l_indices = malloc(CORESIZE * sizeof(unsigned long));
-  l_running = malloc(CORESIZE * sizeof(int));
+  l_positions = malloc(WARRIORS * sizeof(uint16_t));
+  l_proc1 = malloc(WARRIORS * sizeof(PROC1*));
+  l_nprocs = malloc(WARRIORS * sizeof(unsigned long));
+  l_indices = malloc(WARRIORS * sizeof(unsigned long));
+  l_running = malloc(WARRIORS * sizeof(int));
   #ifdef _COREVIEW_
   l_coreviewdata = malloc(CORESIZE * sizeof(CVCELL));
   #endif
@@ -2049,18 +2049,8 @@ void simulate2(_corefun0) {
   #endif
 
   //run in a loop
-  for(c = 0; c < MAXCYCLES; ++c) {
-    for(l_w2 = 0; l_w2 < l_nrunning; ++l_w2) {
-      addr2_t pc = l_proc2[l_w2]->pos;
-      addr2_t a, b;
-      a = l_core2[pc].a;
-      b = l_core2[pc].b;
-      //printf("[##] "); debug_println2(l_core2[##]); //D
-      //debug_println2(l_core2[pc]); //D
-      if(l_core2[pc].fn(_corecall l_core2, pc, a, b)) goto _label_endbattle; //<here sigsegv
-    }
-  }
-  _label_endbattle:
+  if(jit_main_loop == NULL) compile_jit_all();
+  jit_main_loop(_corecal0);
 
   #if defined(TSAFE_CORE) && PSPACESIZE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);
@@ -2073,11 +2063,11 @@ void simulate2(_corefun0) {
 unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number of rounds
   unsigned int cround;
   l_core2 = malloc(CORESIZE * sizeof(INSTR2));
-  l_positions = malloc(WARRIORS * 2);
-  l_proc2 = malloc(CORESIZE * sizeof(PROC2*));
-  l_nprocs = malloc(CORESIZE * sizeof(unsigned long));
-  l_indices = malloc(CORESIZE * sizeof(unsigned long));
-  l_running = malloc(CORESIZE * sizeof(int));
+  l_positions = malloc(WARRIORS * sizeof(uint16_t));
+  l_proc2 = malloc(WARRIORS * sizeof(PROC2*));
+  l_nprocs = malloc(WARRIORS * sizeof(unsigned long));
+  l_indices = malloc(WARRIORS * sizeof(unsigned long));
+  l_running = malloc(WARRIORS * sizeof(int));
   init_pool_proc2();
   unsigned long w;
   for(w = 0; w < WARRIORS; ++w) {
@@ -2089,7 +2079,7 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
   for(cround = 0; cround < nrounds; ++cround) {
     unsigned long c;
     for(c = 0; c < CORESIZE; ++c) {
-      l_core2[c].fn = (jitfunc2_t) _hardcoded_dat;
+      l_core2[c].in = (jitind_t) 0; //hardcoded initial DAT index
       l_core2[c].a = 0;
       l_core2[c].b = 0;
     }

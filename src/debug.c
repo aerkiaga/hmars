@@ -320,7 +320,7 @@ void update_coreview_metrics(COREVIEW* cv) {
     cv->cw * cv->csize, cv->ch * cv->csize);
   if(cv->data != NULL) free(cv->data);
   cv->data = malloc(4 * cv->cw * cv->csize * cv->ch * cv->csize);
-  memset(cv->data, 0, 4 * cv->cw * cv->csize * cv->ch * cv->csize); //here the crash
+  memset(cv->data, 0, 4 * cv->cw * cv->csize * cv->ch * cv->csize);
   return;
 }
 
@@ -589,6 +589,6 @@ void debug_println1(uint64_t i) {
 }
 
 void debug_println2(INSTR2 I) {
-  printf("%-*p %d,\t%d\n", (int) sizeof(void*) * 2, I.fn, I.a, I.b);
+  printf("%-*ld %d,\t%d\n", (int) sizeof(jitind_t) * 2, I.in, I.a, I.b);
   return;
 }

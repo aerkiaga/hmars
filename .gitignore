@@ -1,0 +1,7 @@
+*
+!.gitignore
+!src/*
+!test/*
+!LICENSE
+!Makefile
+!README.md
