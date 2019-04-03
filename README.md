@@ -1,3 +1,9 @@
+[![Stuff](https://img.shields.io/static/v1.svg?label=test&message=passed&color=success)](https://github.com/aerkiaga/hmars/)
+<!---
+[//]: # (![Stuff](https://img.shields.io/static/v1.svg?label=test&message=failed&color=critical))
+[//]: # (![Stuff](https://img.shields.io/static/v1.svg?label=test&message=untested&color=important))
+--->
+
 # hmars
 A fast and feature-rich Memory Array Redcode Simulator for Corewar.
 
