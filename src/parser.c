@@ -2218,8 +2218,8 @@ int expand_expressions(LINE* line, int line_is, int exp_base) {
       strncpy(expr, &line->data[expstart], expend-expstart);
       expr[expend-expstart] = '\0';
       char* newexp = compute_expression(expr, line, line_is);
+      free(expr);
       if(newexp != NULL) { //if it has been evaluated
-        free(expr);
         expr = newexp;
         if(expr[0] == '\0') { //returned static "" (error)
           return 1;
