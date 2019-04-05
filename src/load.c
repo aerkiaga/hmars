@@ -495,8 +495,9 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
 void unload_warrior(int c) {
   if(warriors[c].code1 != NULL) {free(warriors[c].code1); warriors[c].code1 = NULL;}
   if(warriors[c].code2 != NULL) {free(warriors[c].code2); warriors[c].code2 = NULL;}
-  free(warriors[c].name); warriors[c].name = NULL;
-  free(warriors[c].author); warriors[c].author = NULL;
+  if(warriors[c].name != NULL) {free(warriors[c].name); warriors[c].name = NULL;}
+  if(warriors[c].author != NULL) {free(warriors[c].author); warriors[c].author = NULL;}
+  if(warriors[c].strategy != NULL) {free(warriors[c].strategy); warriors[c].strategy = NULL;}
   #if PSPACESIZE
   unsigned long k;
   int check = 0;
