@@ -668,7 +668,7 @@ LINE* format2text(const char* format, ...) {
   return r;
 }
 
-void append_line_history(LINE* dst, LINE* src, int extra) {
+void append_line_history(LINE* dst, const LINE* src, int extra) {
   int len = src->nhist;
   int len2 = 0;
   switch(extra) {
@@ -699,7 +699,7 @@ void append_line_history(LINE* dst, LINE* src, int extra) {
   return;
 }
 
-void text_substitute_label(LINE* line, int labstart, int labend, LINE* subs) {
+void text_substitute_label(LINE* line, int labstart, int labend, const LINE* subs) {
   if(subs->next == NULL) { //single-line constant
     int len = labstart + line->len - labend + subs->len;
     int afterlen = line->len - labend;
@@ -718,7 +718,7 @@ void text_substitute_label(LINE* line, int labstart, int labend, LINE* subs) {
     line->data = (char*) realloc(line->data, line->len+1);
     if(subs->len) strcpy(&line->data[labstart], subs->data);
     append_line_history(line, subs, THIST_SSUB);
-    LINE* l = line; LINE* s = subs;
+    LINE* l = line; const LINE* s = subs;
     while(s->next->next != NULL) { //intermediate lines
       s = s->next;
       LINE* tmp = (LINE*) malloc(sizeof(LINE));
@@ -2814,6 +2814,7 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
                 empty->data = NULL;
                 empty->nhist = empty->len = 0;
                 text_substitute_label(line, labstart, labend + ((colon)? 1 : 0), empty);
+                free(empty);
                 labstart = labend = -1;
               }
             }
