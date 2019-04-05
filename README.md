@@ -12,7 +12,7 @@ A fast and feature-rich Memory Array Redcode Simulator for Corewar.
 ## Installation
 1. Take a look at src/config.h, this contains several useful configuration options.
 2. Build one of the following:
-   * Type `make hmars` to build the ~~JIT~~ command-line version (for now it uses a classic-style simulator, until the JIT is fully stable and fast).
+   * Type `make hmars` to build the command-line version.
    * Type `make hmars-gui` to build the SDL interactive debugger.
    * Type `make` or `make all` to build both of them.
 
@@ -32,4 +32,4 @@ Option | Description
 `--test` | Ignores other options and performs self-test.
 
 ### Debugger
-The debugger is not currently finished. For now, it only displays the ongoing round on a rectangular area. It starts paused, and clicking on it begins the simulation.
+The debugger is not currently finished. For now, it only displays the ongoing round in a rectangular area. It starts paused, and clicking on it begins the simulation.
