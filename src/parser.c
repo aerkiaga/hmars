@@ -363,7 +363,7 @@ LINE* get_dictionary(DICTIONARY* dict, char* tag) {
   return r;
 }
 
-void set_dictionary(DICTIONARY* dict, char* tag, LINE* restrict data) { //only call if the entry does not exist
+void set_dictionary(DICTIONARY* dict, const char* tag, LINE* restrict data) { //only call if the entry does not exist
   /** \brief Creates a new dictionary entry identified by tag.
       \param dict [out] Pointer to the dictionary to create the entry in.
       \param tag [in] The tag identifying the new dictionary entry.
@@ -1034,95 +1034,95 @@ int init_parser() {
 
   { //instructions
     #ifdef O_DAT
-    set_dictionary(&d_opcodes, restricted_copy("DAT"), (void*)1);
+    set_dictionary(&d_opcodes, "DAT", (void*)1);
     #endif
     #ifdef O_MOV
-    set_dictionary(&d_opcodes, restricted_copy("MOV"), (void*)1);
+    set_dictionary(&d_opcodes, "MOV", (void*)1);
     #endif
     #ifdef O_ADD
-    set_dictionary(&d_opcodes, restricted_copy("ADD"), (void*)1);
+    set_dictionary(&d_opcodes, "ADD", (void*)1);
     #endif
     #ifdef O_SUB
-    set_dictionary(&d_opcodes, restricted_copy("SUB"), (void*)1);
+    set_dictionary(&d_opcodes, "SUB", (void*)1);
     #endif
     #ifdef O_MUL
-    set_dictionary(&d_opcodes, restricted_copy("MUL"), (void*)1);
+    set_dictionary(&d_opcodes, "MUL", (void*)1);
     #endif
     #ifdef O_DIV
-    set_dictionary(&d_opcodes, restricted_copy("DIV"), (void*)1);
+    set_dictionary(&d_opcodes, "DIV", (void*)1);
     #endif
     #ifdef O_MOD
-    set_dictionary(&d_opcodes, restricted_copy("MOD"), (void*)1);
+    set_dictionary(&d_opcodes, "MOD", (void*)1);
     #endif
     #ifdef O_JMP
-    set_dictionary(&d_opcodes, restricted_copy("JMP"), (void*)1);
+    set_dictionary(&d_opcodes, "JMP", (void*)1);
     #endif
     #ifdef O_JMZ
-    set_dictionary(&d_opcodes, restricted_copy("JMZ"), (void*)1);
+    set_dictionary(&d_opcodes, "JMZ", (void*)1);
     #endif
     #ifdef O_JMN
-    set_dictionary(&d_opcodes, restricted_copy("JMN"), (void*)1);
+    set_dictionary(&d_opcodes, "JMN", (void*)1);
     #endif
     #ifdef O_DJZ
-    set_dictionary(&d_opcodes, restricted_copy("DJZ"), (void*)1);
+    set_dictionary(&d_opcodes, "DJZ", (void*)1);
     #endif
     #ifdef O_DJN
-    set_dictionary(&d_opcodes, restricted_copy("DJN"), (void*)1);
+    set_dictionary(&d_opcodes, "DJN", (void*)1);
     #endif
     #ifdef O_CMP
-    set_dictionary(&d_opcodes, restricted_copy("CMP"), (void*)1);
+    set_dictionary(&d_opcodes, "CMP", (void*)1);
     #endif
     #ifdef O_SEQ
-    set_dictionary(&d_opcodes, restricted_copy("SEQ"), (void*)1);
+    set_dictionary(&d_opcodes, "SEQ", (void*)1);
     #endif
     #ifdef O_SNE
-    set_dictionary(&d_opcodes, restricted_copy("SNE"), (void*)1);
+    set_dictionary(&d_opcodes, "SNE", (void*)1);
     #endif
     #ifdef O_SLT
-    set_dictionary(&d_opcodes, restricted_copy("SLT"), (void*)1);
+    set_dictionary(&d_opcodes, "SLT", (void*)1);
     #endif
     #ifdef O_SPL
-    set_dictionary(&d_opcodes, restricted_copy("SPL"), (void*)1);
+    set_dictionary(&d_opcodes, "SPL", (void*)1);
     #endif
     #ifdef O_NOP
-    set_dictionary(&d_opcodes, restricted_copy("NOP"), (void*)1);
+    set_dictionary(&d_opcodes, "NOP", (void*)1);
     #endif
     #ifdef O_LDP
-    set_dictionary(&d_opcodes, restricted_copy("LDP"), (void*)1);
+    set_dictionary(&d_opcodes, "LDP", (void*)1);
     #endif
     #ifdef O_STP
-    set_dictionary(&d_opcodes, restricted_copy("STP"), (void*)1);
+    set_dictionary(&d_opcodes, "STP", (void*)1);
     #endif
     #if defined(O_XCH) || STANDARD == 89
-    set_dictionary(&d_opcodes, restricted_copy("XCH"), (void*)1);
+    set_dictionary(&d_opcodes, "XCH", (void*)1);
     #endif
     #ifdef O_PCT
-    set_dictionary(&d_opcodes, restricted_copy("PCT"), (void*)1);
+    set_dictionary(&d_opcodes, "PCT", (void*)1);
     #endif
     #ifdef O_STS
-    set_dictionary(&d_opcodes, restricted_copy("STS"), (void*)1);
+    set_dictionary(&d_opcodes, "STS", (void*)1);
     #endif
   }
 
-  set_dictionary(&d_opcodes, restricted_copy("XXX"), (void*)1);
+  set_dictionary(&d_opcodes, "XXX", (void*)1);
 
-  if(parsopt.allow_pseudo_org) set_dictionary(&d_pseudoops, restricted_copy("ORG"), (void*)1);
-  if(parsopt.allow_pseudo_equ) set_dictionary(&d_pseudoops, restricted_copy("EQU"), (void*)1);
-  if(parsopt.allow_pseudo_for) set_dictionary(&d_pseudoops, restricted_copy("FOR"), (void*)1);
-  if(parsopt.allow_pseudo_for) set_dictionary(&d_pseudoops, restricted_copy("ROF"), (void*)1);
-  if(parsopt.allow_pseudo_end) set_dictionary(&d_pseudoops, restricted_copy("END"), (void*)1);
-  if(parsopt.allow_pseudo_pin) set_dictionary(&d_pseudoops, restricted_copy("PIN"), (void*)1);
-  if(parsopt.allow_pseudo_space) set_dictionary(&d_pseudoops, restricted_copy("SPACE"), (void*)1);
+  if(parsopt.allow_pseudo_org) set_dictionary(&d_pseudoops, "ORG", (void*)1);
+  if(parsopt.allow_pseudo_equ) set_dictionary(&d_pseudoops, "EQU", (void*)1);
+  if(parsopt.allow_pseudo_for) set_dictionary(&d_pseudoops, "FOR", (void*)1);
+  if(parsopt.allow_pseudo_for) set_dictionary(&d_pseudoops, "ROF", (void*)1);
+  if(parsopt.allow_pseudo_end) set_dictionary(&d_pseudoops, "END", (void*)1);
+  if(parsopt.allow_pseudo_pin) set_dictionary(&d_pseudoops, "PIN", (void*)1);
+  if(parsopt.allow_pseudo_space) set_dictionary(&d_pseudoops, "SPACE", (void*)1);
 
   if(parsopt.predef_constants) {
-    set_dictionary(&d_constants, restricted_copy("CORESIZE"), format2text("%d", CORESIZE));
-    set_dictionary(&d_constants, restricted_copy("WARRIORS"), format2text("%d", WARRIORS));
-    set_dictionary(&d_constants, restricted_copy("PSPACESIZE"), format2text("%d", PSPACESIZE));
-    set_dictionary(&d_constants, restricted_copy("MAXCYCLES"), format2text("%d", MAXCYCLES));
-    set_dictionary(&d_constants, restricted_copy("MAXPROCESSES"), format2text("%d", MAXPROCESSES));
-    set_dictionary(&d_constants, restricted_copy("MAXLENGTH"), format2text("%d", MAXLENGTH));
-    set_dictionary(&d_constants, restricted_copy("MINDISTANCE"), format2text("%d", MINDISTANCE));
-    set_dictionary(&d_constants, restricted_copy("VERSION"), format2text("%d", VERSION));
+    set_dictionary(&d_constants, "CORESIZE", format2text("%d", CORESIZE));
+    set_dictionary(&d_constants, "WARRIORS", format2text("%d", WARRIORS));
+    set_dictionary(&d_constants, "PSPACESIZE", format2text("%d", PSPACESIZE));
+    set_dictionary(&d_constants, "MAXCYCLES", format2text("%d", MAXCYCLES));
+    set_dictionary(&d_constants, "MAXPROCESSES", format2text("%d", MAXPROCESSES));
+    set_dictionary(&d_constants, "MAXLENGTH", format2text("%d", MAXLENGTH));
+    set_dictionary(&d_constants, "MINDISTANCE", format2text("%d", MINDISTANCE));
+    set_dictionary(&d_constants, "VERSION", format2text("%d", VERSION));
   }
 
   org_is_set = pin_is_set = 0;
@@ -2638,7 +2638,7 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
                 parmsline->nhist = 0;
                 parmsline->prev = NULL;
                 parmsline->next = NULL;
-                set_dictionary(&d_signatures, restricted_copy(label), parmsline);
+                set_dictionary(&d_signatures, label, parmsline);
               } //if function-like
               //start retrieving value
               for(; isblank(line->data[c]); ++c) ; //remove leading whitespace
