@@ -468,6 +468,7 @@ extern void set_coreview_target(COREVIEW*, unsigned int, ...);
 extern void set_core_runmode(LOCAL_CORE*, unsigned int, unsigned int);
 extern void set_coreview_runmode(COREVIEW*, unsigned int, unsigned int);
 extern void destroy_coreview(COREVIEW*);
+#endif
 extern void compile_instr(INSTR1);
 extern void compile_jit_all(void);
 extern void jit_invalidate(void);
@@ -475,4 +476,3 @@ extern void hasht_reset(void);
 extern void jit_clear(void);
 extern void add_hdat(void);
 extern jitind_t instr1to2(uint32_t);
-#endif
