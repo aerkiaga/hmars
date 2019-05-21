@@ -16,9 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-/**TODO: make these tuneable at runtime**/
-#define PSPACESIZE 500 ///< 0 disables P-space
-#define MINDISTANCE 100
 #define VERSION 30 ///< hMARS 0.3.0
 
 /// Native standard setting for simulator.
@@ -31,6 +28,7 @@
  ** Also, 84 (pre-ICWS) adds instruction DJZ, but it is also available as an
  ** extension, which allows compatibility with 84 by enabling EXT_DJZ. */
 #define STANDARD 94
+#define PSPACE ///< Enables P-space
 
 /**Extensions, uncomment to use**/
 //#define EXT_XCH_a ///< Exchange A- and B-fields of A-operand

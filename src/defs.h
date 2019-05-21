@@ -49,6 +49,10 @@ extern unsigned int CORESIZE;
 extern unsigned int MAXCYCLES;
 extern unsigned int MAXPROCESSES;
 extern unsigned int MAXLENGTH;
+extern unsigned int MINDISTANCE;
+#ifdef PSPACE
+extern unsigned int PSPACESIZE;
+#endif
 
 #if defined(__GNUC__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ >= 40500)
 #define COMPILER_HINT(x) /*do {if(!(x)) __builtin_unreachable();} while(0)*/;
@@ -103,7 +107,7 @@ typedef uint_fast16_t pcell_t;
 #define O_SEQ O_CMP
 #define O_SNE 14
 #define O_NOP 15
-#if PSPACESIZE
+#ifdef PSPACE
 #define O_LDP 16
 #define O_STP 17
 #define O_X 18
@@ -250,7 +254,7 @@ struct t_WARRIOR {
   unsigned int len;
   INSTR1* code1;
   INSTR2* code2;
-  #if PSPACESIZE
+  #ifdef PSPACE
   pcell_t* pspace;
   pcell_t psp0;
   unsigned long pin;
@@ -346,7 +350,7 @@ typedef struct t_LOCAL_CORE {
   int l_rundata;
   #endif
   THREAD l_thread; //thread running core
-  #if PSPACESIZE
+  #ifdef PSPACE
   int la_pspace_local_accessed;
   #endif
   unsigned long l_hook_lastw_ordered; //ordered index of warrior executing current instruction
@@ -380,7 +384,7 @@ typedef struct t_LOCAL_CORE {
 #define l_rundata local_core->l_rundata
 #endif
 #define l_thread local_core->l_thread
-#if PSPACESIZE
+#ifdef PSPACE
 #define l_pspace_local_accessed local_core->la_pspace_local_accessed //different alias for standalone member use
 #endif
 #define l_hook_lastw_ordered local_core->l_hook_lastw_ordered

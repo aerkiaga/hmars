@@ -177,7 +177,7 @@ void compile_jit_types() {
   }
   { //warrior
     jit_type_t fields3[] = {jit_type_sys_ulong, jit_type_void_ptr, jit_type_void_ptr, jit_type_sys_uint, jit_type_void_ptr, jit_type_void_ptr,
-    #if PSPACESIZE
+    #ifdef PSPACE
       jit_type_void_ptr, j_types.pcell, jit_type_sys_ulong, jit_type_sys_int,
     #endif
       jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint, jit_type_sys_uint

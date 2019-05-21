@@ -28,6 +28,10 @@ unsigned int CORESIZE = 8000;
 unsigned int MAXCYCLES = 80000;
 unsigned int MAXPROCESSES = 8000;
 unsigned int MAXLENGTH = 100;
+unsigned int MINDISTANCE = 100;
+#ifdef PSPACE
+unsigned int PSPACESIZE = 500;
+#endif
 
 void _Noreturn error(const char* msg, ...) {
   va_list args;
@@ -57,6 +61,10 @@ void _Noreturn display_help_exit() {
     "  -c <cycles>  Maximum number of cycles per round [80000]\n"
     "  -p <procs>   Maximum number of processes per warrior [8000]\n"
     "  -l <length>  Maximum warrior length [100]\n"
+    "  -d <dist>    Minimum distance between warriors [100]\n"
+    #ifdef PSPACE
+    "  -S <size>    Size of P-space in cells [CORESIZE/16]\n"
+    #endif
     "  -L <file>    Output loadfile, must come after warrior file\n"
     "  -V           Increase verbosity one level, up to two\n"
     "  --test       Perform self test, ignores other arguments\n"
@@ -160,7 +168,7 @@ int self_test() {
     warriors[0].code2 = NULL;
   }
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   free(warriors[0].pspace);
   warriors[0].pspace = NULL;
   #endif
@@ -222,6 +230,18 @@ int main(int argc, char* argv[]) {
           if(c == argc) error("Option -l must be followed by a number.");
           sscanf(argv[c], "%d", &MAXLENGTH);
           break;
+        case 'd':
+          ++c;
+          if(c == argc) error("Option -d must be followed by a number.");
+          sscanf(argv[c], "%d", &MINDISTANCE);
+          break;
+        #ifdef PSPACE
+        case 'S':
+          ++c;
+          if(c == argc) error("Option -S must be followed by a number.");
+          sscanf(argv[c], "%d", &PSPACESIZE);
+          break;
+        #endif
         case '-':
           if(!strcmp(&(argv[c][2]), "test")) {
             ++c;
@@ -249,7 +269,7 @@ int main(int argc, char* argv[]) {
 
   if(CORESIZE <= 2) error("CORESIZE must be at least 3");
   else if(CORESIZE > 32768) error("CORESIZE must be less than or equal to 32768");
-  #if PSPACESIZE
+  #ifdef PSPACE
     if(CORESIZE % PSPACESIZE) puts("Warning: PSPACESIZE should be a factor of CORESIZE");
   #endif
   if(CORESIZE < MINDISTANCE*2) puts("CORESIZE should be at least equal to MINDISTANCE*2");

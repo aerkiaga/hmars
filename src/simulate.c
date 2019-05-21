@@ -21,7 +21,7 @@
 
 //GLOBALS
 WARRIOR* warriors;
-#if PSPACESIZE
+#ifdef PSPACE
 MUTEX mutex_pwarriors;
 #endif
 int terminating = 0;
@@ -306,7 +306,7 @@ void inline hook_ondec_B(_corefunc int16_t ptr) { //perform decrement (B-field)
 #define hook_ondec_B(x) --l_core1[x]._B; BOUND_CORESIZE(l_core1[x]._B);
 #endif
 
-#if PSPACESIZE
+#ifdef PSPACE
 #if defined(_COREVIEW_not_yet)
 #define HOOK_ONPREAD
 uint16_t inline hook_onpread(unsigned long w, int16_t pos) { //return value
@@ -500,7 +500,7 @@ void simulate1(_corefun0) {
   memset(l_isPCT, 0, CORESIZE * sizeof(uint_fast8_t)); //unprotected
   #endif
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   l_pspace_local_accessed = 0;
   #endif
 
@@ -1793,7 +1793,7 @@ void simulate1(_corefun0) {
   }
   _label_endbattle:
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);
   #endif
   #ifdef _COREVIEW_
@@ -1844,7 +1844,7 @@ unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number 
           warriors[c].wins++;
         }
         warriors[c].score += (WARRIORS*WARRIORS-1)/l_nrunning;
-        #if PSPACESIZE
+        #ifdef PSPACE
         mlock(mutex_pwarriors);
         warriors[c].psp0 = l_nrunning;
         munlock(mutex_pwarriors);
@@ -1852,7 +1852,7 @@ unsigned int battle1(_corefunc unsigned long nrounds) { //returns actual number 
       }
       else {
         warriors[c].losses++;
-        #if PSPACESIZE
+        #ifdef PSPACE
         mlock(mutex_pwarriors);
         warriors[c].psp0 = 0;
         munlock(mutex_pwarriors);
@@ -2018,7 +2018,7 @@ void simulate2(_corefun0) {
     l_indices[c2] = tmp2;
   }
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   l_pspace_local_accessed = 0;
   #endif
 
@@ -2026,7 +2026,7 @@ void simulate2(_corefun0) {
   if(jit_main_loop == NULL) compile_jit_all();
   jit_main_loop(_corecal0);
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   if(l_pspace_local_accessed) munlock(mutex_pwarriors);
   #endif
   //clear process queues
@@ -2068,7 +2068,7 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
           warriors[c].wins++;
         }
         warriors[c].score += (WARRIORS*WARRIORS-1)/l_nrunning;
-        #if PSPACESIZE
+        #ifdef PSPACE
         mlock(mutex_pwarriors);
         warriors[c].psp0 = l_nrunning;
         munlock(mutex_pwarriors);
@@ -2076,7 +2076,7 @@ unsigned int battle2(_corefunc unsigned long nrounds) { //returns actual number 
       }
       else {
         warriors[c].losses++;
-        #if PSPACESIZE
+        #ifdef PSPACE
         mlock(mutex_pwarriors);
         warriors[c].psp0 = 0;
         munlock(mutex_pwarriors);

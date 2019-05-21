@@ -25,7 +25,7 @@ int algorithm_select = 6; // 1 and 2
 #else
 int algorithm_select = 6; // only 2
 #endif
-#if PSPACESIZE
+#ifdef PSPACE
 extern MUTEX mutex_pwarriors;
 #endif
 
@@ -368,7 +368,7 @@ int parse_load(char** redfn, char** lfn, char* pname) { //nonzero = failed
     else warriors[c].code2 = NULL;
     freetext(loadt);
 
-    #if PSPACESIZE
+    #ifdef PSPACE
     warriors[c].pspace = NULL;
     warriors[c].psp0 = CORESIZE-1;
     if(warriors[c].haspin) {
@@ -498,7 +498,7 @@ void unload_warrior(int c) {
   if(warriors[c].name != NULL) {free(warriors[c].name); warriors[c].name = NULL;}
   if(warriors[c].author != NULL) {free(warriors[c].author); warriors[c].author = NULL;}
   if(warriors[c].strategy != NULL) {free(warriors[c].strategy); warriors[c].strategy = NULL;}
-  #if PSPACESIZE
+  #ifdef PSPACE
   unsigned long k;
   int check = 0;
   if(warriors[c].haspin) {
@@ -542,7 +542,7 @@ void reset_warrior(WARRIOR* w) {
 }
 
 void init_warrior(WARRIOR* w) {
-  #if PSPACESIZE
+  #ifdef PSPACE
   w->pspace = malloc(PSPACESIZE * sizeof(pcell_t));
   #endif
   minit(w->mutex);
@@ -561,7 +561,7 @@ void initialize() {
   entropy_getbytes(&randomstateB, 8);
   pcg32_srandom_r(&randomgen, randomstateA, randomstateB);
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   minit(mutex_pwarriors);
   #endif
 
@@ -578,7 +578,7 @@ void finalize() {
 
   jit_clear();
 
-  #if PSPACESIZE
+  #ifdef PSPACE
   mdestroy(mutex_pwarriors);
   #endif
 
