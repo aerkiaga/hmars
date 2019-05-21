@@ -2123,6 +2123,7 @@ void compile_jit_all() {
 
   jit_context_build_end(jit_context);
   free(j_locals);
+  free(jtable);
   return;
 }
 
