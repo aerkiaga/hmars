@@ -24,6 +24,7 @@
 
 unsigned int ROUNDS = 1;
 unsigned int WARRIORS = 0;
+unsigned int CORESIZE = 8000;
 
 void _Noreturn error(const char* msg, ...) {
   va_list args;
@@ -40,18 +41,19 @@ void _Noreturn display_help_exit() {
     "hMARS  v0.3-pre, Copyright (C) 2018  Aritz Erkiaga\n"
     "Usage:\n"
     #ifdef _COREVIEW_
-    "hmars-gui [options] file1 [-l loadfile] file2 ...\n"
+    "hmars-gui [options] (<file> [-l <loadfile>]) ...\n"
     "hmars-gui --test\n"
     #else
-    "hmars [options] file1 [-l loadfile] file2 ...\n"
+    "hmars [options] (<file1> [-l <loadfile1>]) ...\n"
     "hmars --test\n"
     #endif
     "\n"
     "Options:\n"
-    "  -r num   Number of rounds to fight [1]\n"
-    "  -l file  Output loadfile, must come after warrior file\n"
-    "  -V       Increase verbosity one level, up to two\n"
-    "  --test   Perform self test, ignores other arguments\n"
+    "  -r <rounds>  Number of rounds to fight [1]\n"
+    "  -s <size>    Size of core in instructions [8000]\n"
+    "  -l <file>    Output loadfile, must come after warrior file\n"
+    "  -V           Increase verbosity one level, up to two\n"
+    "  --test       Perform self test, ignores other arguments\n"
     "\n"
     "Example:\n"
     #ifdef _COREVIEW_
@@ -194,6 +196,11 @@ int main(int argc, char* argv[]) {
           if(c == argc) error("Option -r must be followed by number of rounds.");
           sscanf(argv[c], "%d", &ROUNDS);
           break;
+        case 's':
+          ++c;
+          if(c == argc) error("Option -s must be followed by core size.");
+          sscanf(argv[c], "%d", &CORESIZE);
+          break;
         case '-':
           if(!strcmp(&(argv[c][2]), "test")) {
             ++c;
@@ -218,6 +225,13 @@ int main(int argc, char* argv[]) {
   WARRIORS = redfnc;
 
   if(!WARRIORS) display_help_exit();
+
+  if(CORESIZE <= 2) error("CORESIZE must be at least 3");
+  else if(CORESIZE > 32768) error("CORESIZE must be less than or equal to 32768");
+  #if PSPACESIZE
+    if(CORESIZE % PSPACESIZE) puts("Warning: PSPACESIZE should be a factor of CORESIZE");
+  #endif
+  if(CORESIZE < MINDISTANCE*2) puts("CORESIZE should be at least equal to MINDISTANCE*2");
 
   initialize();
   if(parse_load(redfn, lfn, argv[0])) {

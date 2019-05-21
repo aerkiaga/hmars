@@ -45,6 +45,7 @@ typedef struct t_WARRIOR WARRIOR;
 
 extern unsigned int ROUNDS;
 extern unsigned int WARRIORS;
+extern unsigned int CORESIZE;
 
 #if defined(__GNUC__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ >= 40500)
 #define COMPILER_HINT(x) /*do {if(!(x)) __builtin_unreachable();} while(0)*/;
@@ -57,23 +58,8 @@ extern unsigned int WARRIORS;
 #define __TOSTR(x) __TOSTR2(x)
 #define __LINE_STR __TOSTR(__LINE__)
 
-#if CORESIZE <= 2
-#error "CORESIZE must be at least 3."
-#elif CORESIZE <= 256
-typedef uint_fast8_t pcell_t;
-#elif CORESIZE <= 35768
 typedef uint_fast16_t pcell_t;
-#else
-#error "CORESIZE must be less than or equal to 32768."
-#endif
-#if PSPACESIZE
-#if (CORESIZE % PSPACESIZE)
-#warning "PSPACESIZE should be a factor of CORESIZE."
-#endif
-#endif
-#if (CORESIZE < MINDISTANCE*2)
-#warning "CORESIZE should be at least equal to MINDISTANCE*2"
-#endif
+
 #if (MAXLENGTH > MINDISTANCE)
 #warning "MAXLENGTH should not be larger than MINDISTANCE"
 #endif

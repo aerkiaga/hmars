@@ -17,7 +17,6 @@
 **/
 
 /**TODO: make these tuneable at runtime**/
-#define CORESIZE 8000
 #define PSPACESIZE 500 ///< 0 disables P-space
 #define MAXCYCLES 80000
 #define MAXPROCESSES 8000
