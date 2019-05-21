@@ -566,10 +566,7 @@ void initialize() {
   #endif
 
   if((algorithm_select >> 2) & 1) {
-    jit_init();
-    hasht_reset();
-    add_hdat();
-    jit_invalidate();
+    j_init();
   }
   return;
 }

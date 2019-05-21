@@ -480,5 +480,6 @@ extern void compile_jit_all(void);
 extern void jit_invalidate(void);
 extern void hasht_reset(void);
 extern void jit_clear(void);
+extern void j_init(void);
 extern void add_hdat(void);
 extern jitind_t instr1to2(uint32_t);
