@@ -69,7 +69,7 @@ int remove_proc_jit(_corefun0) { //returns 1 if battle ends, 0 otherwise
   return 0;
 }
 
-#define REMOVE_PROC_JIT() jit_insn_store(function, jit_locals.r, jit_insn_call_native(function, NULL, remove_proc_jit, signature_remove_proc_jit, (jit_value_t[]){local_core_jit}, 1, JIT_CALL_NOTHROW)); jit_insn_branch(function, &jit_locals.after);
+#define REMOVE_PROC_JIT() jit_insn_store(function, j_locals->r, jit_insn_call_native(function, NULL, remove_proc_jit, signature_remove_proc_jit, (jit_value_t[]){local_core_jit}, 1, JIT_CALL_NOTHROW)); jit_insn_branch(function, &(j_locals->after));
 #ifdef opt_SPL86
 void spl_jit(_corefun0, addr2_t bp) {
 #else
@@ -138,13 +138,6 @@ int _hardcoded_dat(_corefunc INSTR2* core2, addr2_t pc, addr2_t a, addr2_t b) { 
 void (*jit_main_loop)(_corefun0) = NULL;
 jit_function_t jit_func_main_loop;
 
-#warning "This is not thread-safe!"
-struct {
-  jit_function_t function;
-  jit_value_t local_core, pc, a, b, r;
-  jit_label_t after;
-} jit_locals;
-
 jit_type_t compile_jit_type_instr2() {
   jit_type_t fields[3] = {JIT_TYPE(int_fast32_t), jit_type_addr2, jit_type_addr2};
   return jit_type_create_struct(fields, 3, 1);
@@ -173,11 +166,11 @@ void _Noreturn jit_error(char* str) {
   error(str);
 }
 
-void compile_instr(INSTR1 c1_c) {
+void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
   //jit_insn_mark_breakpoint (function, jit_nint data1, jit_nint data2)
 
-  jit_function_t function = jit_locals.function;
-  jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
+  jit_function_t function = j_locals->function;
+  jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
 
   jit_type_t jit_type_instr2 = compile_jit_type_instr2();
   jit_type_t signature_remove_proc_jit = jit_type_create_signature(jit_abi_cdecl, jit_type_nint, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
@@ -193,11 +186,11 @@ void compile_instr(INSTR1 c1_c) {
   //jit_type_t signature_jit_error = jit_type_create_signature(jit_abi_cdecl, jit_type_void, (jit_type_t[]){jit_type_void_ptr}, 1, 1);
 
   jit_value_t local_core_jit, core2, pc, a, b;
-    local_core_jit = jit_locals.local_core;
-    core2 = jit_insn_load_relative(function, jit_locals.local_core, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr);
-    pc = jit_locals.pc;
-    a = jit_locals.a;
-    b = jit_locals.b;
+    local_core_jit = j_locals->local_core;
+    core2 = jit_insn_load_relative(function, j_locals->local_core, offsetof(LOCAL_CORE, la_core2), jit_type_void_ptr);
+    pc = j_locals->pc;
+    a = j_locals->a;
+    b = j_locals->b;
 
   /*jit_value_t stsargs[] = {local_core_jit, JIT_CONST(M_I, jit_type_uint), a, b, JIT_INSTR2_in_L(JIT_CORE2_L(pc))};
   jit_insn_call_native(function, "sts_jit", sts_jit, signature_sts_jit, stsargs, 5, 0);*/ //D
@@ -1344,8 +1337,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labele);
           break; }
         case M_B: case M_AB: {
@@ -1355,8 +1348,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labele);
           break; }
         case M_F: case M_I: case M_X: {
@@ -1367,8 +1360,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labele);
           break; }
       }
@@ -1384,8 +1377,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labele);
           break; }
         case M_B: case M_AB: {
@@ -1395,8 +1388,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labele);
           break; }
         case M_F: case M_I: case M_X: {
@@ -1410,8 +1403,8 @@ void compile_instr(INSTR1 c1_c) {
             JIT_PROC2_pos_S(tmp1, ap);
             jit_value_t next = JIT_PROC2_next_L(tmp1);
             jit_insn_store_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_proc2), jit_type_void_ptr), JIT_W(), next); //l_proc2[w] = l_proc2[w]->next;                  jit_insn_return(function, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-            jit_insn_branch(function, &jit_locals.after);
+            jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+            jit_insn_branch(function, &(j_locals->after));
           jit_insn_label(function, &labelb);
           break; }
       }
@@ -1765,8 +1758,8 @@ void compile_instr(INSTR1 c1_c) {
         jit_value_t xp = ap;
         #endif
         jit_insn_call_native(function, NULL, spl_jit, signature_spl_jit, (jit_value_t[]){local_core_jit, xp}, 2, JIT_CALL_NOTHROW);
-        jit_insn_store(function, jit_locals.r, JIT_CONST(0, jit_type_sys_int));
-        jit_insn_branch(function, &jit_locals.after);
+        jit_insn_store(function, j_locals->r, JIT_CONST(0, jit_type_sys_int));
+        jit_insn_branch(function, &(j_locals->after));
       jit_insn_label(function, &labele);
       break; }
     #endif
@@ -2039,7 +2032,6 @@ void compile_jit_all() {
   //jit_type_t jit_type_warrior = compile_jit_type_warrior(jit_type_pcell);
   //jit_type_t jit_type_proc2 = compile_jit_type_proc2();
 
-
   jit_function_t function;
   jit_type_t params[1] = {jit_type_void_ptr};
   jit_type_t signature;
@@ -2058,12 +2050,14 @@ void compile_jit_all() {
   jit_value_t a = jit_value_create(function, jit_type_addr2);
   jit_value_t b = jit_value_create(function, jit_type_addr2);
 
-  jit_locals.function = function;
-  jit_locals.local_core = local_core_jit;
-  jit_locals.pc = pc;
-  jit_locals.a = a;
-  jit_locals.b = b;
-  jit_locals.r = jit_value_create(function, jit_type_sys_int);
+  J_LOCALS* j_locals = (J_LOCALS*) malloc(sizeof(J_LOCALS));
+
+  j_locals->function = function;
+  j_locals->local_core = local_core_jit;
+  j_locals->pc = pc;
+  j_locals->a = a;
+  j_locals->b = b;
+  j_locals->r = jit_value_create(function, jit_type_sys_int);
 
   jit_insn_store(function, c, JIT_CONST(0, jit_type_sys_ulong));
   jit_label_t labeloutstart = jit_label_undefined;
@@ -2084,7 +2078,7 @@ void compile_jit_all() {
       jit_label_t* jtable = (jit_label_t*) malloc(g_data2.nentr * sizeof(jit_label_t));
       int_fast32_t k;
       for(k = 0; k < g_data2.nentr; ++k) jtable[k] = jit_label_undefined;
-      jit_locals.after = jit_label_undefined;
+      j_locals->after = jit_label_undefined;
 
       jit_insn_jump_table(function, in, jtable, g_data2.nentr);
 
@@ -2097,12 +2091,12 @@ void compile_jit_all() {
         INSTR1 i1;
         i1._OMA = g_data2.oma[k];
 
-        compile_instr(i1);
-        jit_insn_branch(function, &jit_locals.after);
+        compile_instr(i1, j_locals);
+        jit_insn_branch(function, &(j_locals->after));
       }
-      jit_insn_label(function, &jit_locals.after);
+      jit_insn_label(function, &(j_locals->after));
 
-      jit_insn_branch_if(function, jit_insn_to_bool(function, jit_locals.r), &labelendbattle);
+      jit_insn_branch_if(function, jit_insn_to_bool(function, j_locals->r), &labelendbattle);
     jit_insn_store_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_insn_add(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2), jit_type_sys_ulong), JIT_CONST(1, jit_type_sys_ulong))); //++l_w2
     jit_insn_branch(function, &labelinstart);
     jit_insn_label(function, &labelinend);
@@ -2116,6 +2110,7 @@ void compile_jit_all() {
   jit_main_loop = jit_function_to_closure(function);
 
   jit_context_build_end(jit_context);
+  free(j_locals);
   return;
 }
 

@@ -434,6 +434,12 @@ typedef struct tCOREVIEW {
 #define sleep_ms(x) SDL_Delay(x)
 #endif
 
+typedef struct tJ_LOCALS {
+  jit_function_t function;
+  jit_value_t local_core, pc, a, b, r;
+  jit_label_t after;
+} J_LOCALS;
+
 //Thread-local
 extern void _Noreturn error(const char*, ...);
 extern unsigned int battle1_single(unsigned long); //single-thread, blocking
@@ -469,7 +475,7 @@ extern void set_core_runmode(LOCAL_CORE*, unsigned int, unsigned int);
 extern void set_coreview_runmode(COREVIEW*, unsigned int, unsigned int);
 extern void destroy_coreview(COREVIEW*);
 #endif
-extern void compile_instr(INSTR1);
+extern void compile_instr(INSTR1, J_LOCALS*);
 extern void compile_jit_all(void);
 extern void jit_invalidate(void);
 extern void hasht_reset(void);
