@@ -25,6 +25,9 @@
 unsigned int ROUNDS = 1;
 unsigned int WARRIORS = 0;
 unsigned int CORESIZE = 8000;
+unsigned int MAXCYCLES = 80000;
+unsigned int MAXPROCESSES = 8000;
+unsigned int MAXLENGTH = 100;
 
 void _Noreturn error(const char* msg, ...) {
   va_list args;
@@ -51,7 +54,10 @@ void _Noreturn display_help_exit() {
     "Options:\n"
     "  -r <rounds>  Number of rounds to fight [1]\n"
     "  -s <size>    Size of core in instructions [8000]\n"
-    "  -l <file>    Output loadfile, must come after warrior file\n"
+    "  -c <cycles>  Maximum number of cycles per round [80000]\n"
+    "  -p <procs>   Maximum number of processes per warrior [8000]\n"
+    "  -l <length>  Maximum warrior length [100]\n"
+    "  -L <file>    Output loadfile, must come after warrior file\n"
     "  -V           Increase verbosity one level, up to two\n"
     "  --test       Perform self test, ignores other arguments\n"
     "\n"
@@ -185,21 +191,36 @@ int main(int argc, char* argv[]) {
         case 'V':
           opt_VERBOSE += 1;
           break;
-        case 'l':
-          if(redfnc == 0) error("Option -l must be preceded by filename.");
+        case 'L':
+          if(redfnc == 0) error("Option -L must be preceded by filename.");
           ++c;
-          if(c == argc) error("Option -l must be followed by filename.");
+          if(c == argc) error("Option -L must be followed by filename.");
           lfn[redfnc-1] = argv[c];
           break;
         case 'r':
           ++c;
-          if(c == argc) error("Option -r must be followed by number of rounds.");
+          if(c == argc) error("Option -r must be followed by a number.");
           sscanf(argv[c], "%d", &ROUNDS);
           break;
         case 's':
           ++c;
-          if(c == argc) error("Option -s must be followed by core size.");
+          if(c == argc) error("Option -s must be followed by a number.");
           sscanf(argv[c], "%d", &CORESIZE);
+          break;
+        case 'c':
+          ++c;
+          if(c == argc) error("Option -c must be followed by a number.");
+          sscanf(argv[c], "%d", &MAXCYCLES);
+          break;
+        case 'p':
+          ++c;
+          if(c == argc) error("Option -p must be followed by a number.");
+          sscanf(argv[c], "%d", &MAXPROCESSES);
+          break;
+        case 'l':
+          ++c;
+          if(c == argc) error("Option -l must be followed by a number.");
+          sscanf(argv[c], "%d", &MAXLENGTH);
           break;
         case '-':
           if(!strcmp(&(argv[c][2]), "test")) {

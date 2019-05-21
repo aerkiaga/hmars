@@ -4107,6 +4107,8 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
 
     w->len = CURLINE;
 
+    if(w->len > MAXLENGTH) error("Warrior length %d exceeds MAXLENGTH (%d)", w->len, MAXLENGTH);
+
     if(txt->data != NULL) free(txt->data);
     txt->data = restricted_copy("       ORG      START");
     txt->len = strlen(txt->data);

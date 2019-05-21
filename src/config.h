@@ -18,9 +18,6 @@
 
 /**TODO: make these tuneable at runtime**/
 #define PSPACESIZE 500 ///< 0 disables P-space
-#define MAXCYCLES 80000
-#define MAXPROCESSES 8000
-#define MAXLENGTH 100
 #define MINDISTANCE 100
 #define VERSION 30 ///< hMARS 0.3.0
 

@@ -46,6 +46,9 @@ typedef struct t_WARRIOR WARRIOR;
 extern unsigned int ROUNDS;
 extern unsigned int WARRIORS;
 extern unsigned int CORESIZE;
+extern unsigned int MAXCYCLES;
+extern unsigned int MAXPROCESSES;
+extern unsigned int MAXLENGTH;
 
 #if defined(__GNUC__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ >= 40500)
 #define COMPILER_HINT(x) /*do {if(!(x)) __builtin_unreachable();} while(0)*/;
