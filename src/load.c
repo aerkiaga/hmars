@@ -563,6 +563,7 @@ void initialize() {
 
   #ifdef PSPACE
   minit(mutex_pwarriors);
+  PSPACESIZE = CORESIZE/16;
   #endif
 
   if((algorithm_select >> 2) & 1) {
