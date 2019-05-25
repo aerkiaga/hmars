@@ -440,8 +440,8 @@ extern unsigned int battle2_single(unsigned long); //single-thread, blocking
 extern void battle1_multithread(unsigned long, unsigned int); //multithread, blocking
 extern LOCAL_CORE* battle1_async(unsigned long); //one new thread, non-blocking
 void wait_for_core(LOCAL_CORE*); //wait for battle termination
-extern void debug_println1(uint64_t);
-extern void debug_println2(INSTR2);
+extern void debug_println1(uint64_t, FILE* stream);
+extern void debug_println2(INSTR2, FILE* stream);
 extern void signal_terminate(void);
 extern int check_terminate(void);
 extern int _hardcoded_dat(_corefunc INSTR2*, addr2_t, addr2_t, addr2_t);

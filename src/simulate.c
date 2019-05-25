@@ -524,8 +524,8 @@ void simulate1(_corefun0) {
       #endif
       INSTR1 I;
       I._I = l_core1[pc]._I;
-      //printf("[##] "); debug_println1(l_core1[##]._I); //D
-      //debug_println1(I._I); //D
+      //printf("[##] "); debug_println1(l_core1[##]._I, stdout); //D
+      //debug_println1(I._I, stdout); //D
       int16_t ap = 0;
       INSTR1 ai;
       #ifdef A_ADB
@@ -1769,7 +1769,7 @@ void simulate1(_corefun0) {
           switch(I._M) {
             case M_I:
               printf("%s: ", warriors[l_indices[w]].name);
-              debug_println1(ai._I);
+              debug_println1(ai._I, stdout);
               break;
             case M_A: case M_AB:
               printf("%s: %d\n", warriors[l_indices[w]].name, (int)ai._A);

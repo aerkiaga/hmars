@@ -114,7 +114,7 @@ void sts_jit(_corefunc uint8_t mode, addr2_t v1/*a*/, addr2_t v2/*b*/, jitind_t 
       I._A = v1;
       I._B = v2;
       I._OMA = g_data2.oma[vi];
-      debug_println1(I._I);
+      debug_println1(I._I, stdout);
       break;
     }
     case M_A: case M_AB:

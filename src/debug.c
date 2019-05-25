@@ -436,7 +436,7 @@ void destroy_coreview(COREVIEW* cv) {
 }
 #endif
 
-void debug_println1(uint64_t i) {
+void debug_println1(uint64_t i, FILE* stream) {
   INSTR1 I;
   I._I = i;
   char* s_op = NULL;
@@ -584,11 +584,11 @@ void debug_println1(uint64_t i) {
     case A_PIB: c_aB = '>'; break;
     #endif
   }
-  printf("%s.%s\t%c%d,\t%c%d\n", s_op, s_mod, c_aA, I._A, c_aB, I._B);
+  fprintf(stream, "%s.%s\t%c%d,\t%c%d\n", s_op, s_mod, c_aA, I._A, c_aB, I._B);
   return;
 }
 
-void debug_println2(INSTR2 I) {
-  printf("%-*ld %d,\t%d\n", (int) sizeof(jitind_t) * 2, I.in, I.a, I.b);
+void debug_println2(INSTR2 I, FILE* stream) {
+  fprintf(stream, "%-*ld %d,\t%d\n", (int) sizeof(jitind_t) * 2, I.in, I.a, I.b);
   return;
 }

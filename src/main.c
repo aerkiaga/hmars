@@ -88,7 +88,7 @@ void print_offending_code() {
     if(warriors[0].code2 != NULL) {
       printf("%-*ld ", (int) sizeof(jitind_t) * 2, warriors[0].code2[c].in);
     }
-    debug_println1(warriors[0].code1[c]._I);
+    debug_println1(warriors[0].code1[c]._I, stdout);
   }
   return;
 }

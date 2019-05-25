@@ -35,7 +35,7 @@ Option | Description | Default
 `-S <size>` | Size of P-space in cells. | CORESIZE/16
 `-L <loadfile>` | Must come after warrior file, specifies optional load file to output. | None
 `-V` | Increase verbosity by one level, up to 2 levels. | -
-`--test` | Ignores other options and performs self-test. | -
+`--test` | Ignores remaining options and performs self-test. | -
 
 ### Debugger
 The debugger is not currently finished. For now, it only displays the ongoing round in a rectangular area. It starts paused, and clicking on it begins the simulation.
