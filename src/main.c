@@ -93,6 +93,18 @@ void print_offending_code() {
   return;
 }
 
+void output_disassembled_code(FILE* stream, WARRIOR* w) {
+  fprintf(stream, ";redcode-94\n;name %s\n;author %s\n;assert 1\n       ORG      START\n", w->name, w->author);
+  int c;
+  for(c = 0; c < w->len; ++c) {
+    if(c == w->org) fprintf(stream, "START  ");
+    else fprintf(stream, "       ");
+    debug_println1(w->code1[c]._I, stream);
+  }
+  fputs("END\n", stream);
+  return;
+}
+
 int test_crash_loaded = 0; //whether the offending warrior has been loaded
 void test_crash_handler(int sig) {
   printf("Test code crashed: ");
