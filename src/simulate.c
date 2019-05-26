@@ -418,7 +418,7 @@ void place_generic(_corefun0) {
     l_positions[c] = g;
   }
 
-  for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (shuffle warriors)
+  for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (shuffle warriors, except first)
     unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
     uint16_t tmp = l_positions[c];
     l_positions[c] = l_positions[c2];
@@ -487,17 +487,20 @@ void simulate1(_corefun0) {
 
     l_running[c] = 1;
   }
-  for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm
-    unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
-    PROC1* tmp = l_proc1[c];
-    l_proc1[c] = l_proc1[c2];
-    l_proc1[c2] = tmp;
-    unsigned long tmp2 = l_nprocs[c];
-    l_nprocs[c] = l_nprocs[c2];
-    l_nprocs[c2] = tmp2;
-    tmp2 = l_indices[c];
-    l_indices[c] = l_indices[c2];
-    l_indices[c2] = tmp2;
+
+  if(start_order_random) {
+    for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (random starting order)
+      unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
+      PROC1* tmp = l_proc1[c];
+      l_proc1[c] = l_proc1[c2];
+      l_proc1[c2] = tmp;
+      unsigned long tmp2 = l_nprocs[c];
+      l_nprocs[c] = l_nprocs[c2];
+      l_nprocs[c2] = tmp2;
+      tmp2 = l_indices[c];
+      l_indices[c] = l_indices[c2];
+      l_indices[c2] = tmp2;
+    }
   }
 
   #ifdef O_PCT
@@ -2009,17 +2012,20 @@ void simulate2(_corefun0) {
 
     l_running[c] = 1;
   }
-  for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm
-    unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
-    PROC2* tmp = l_proc2[c];
-    l_proc2[c] = l_proc2[c2];
-    l_proc2[c2] = tmp;
-    unsigned long tmp2 = l_nprocs[c];
-    l_nprocs[c] = l_nprocs[c2];
-    l_nprocs[c2] = tmp2;
-    tmp2 = l_indices[c];
-    l_indices[c] = l_indices[c2];
-    l_indices[c2] = tmp2;
+
+  if(start_order_random) {
+    for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (random starting order)
+      unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
+      PROC2* tmp = l_proc2[c];
+      l_proc2[c] = l_proc2[c2];
+      l_proc2[c2] = tmp;
+      unsigned long tmp2 = l_nprocs[c];
+      l_nprocs[c] = l_nprocs[c2];
+      l_nprocs[c2] = tmp2;
+      tmp2 = l_indices[c];
+      l_indices[c] = l_indices[c2];
+      l_indices[c2] = tmp2;
+    }
   }
 
   #ifdef PSPACE

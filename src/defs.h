@@ -53,6 +53,7 @@ extern unsigned int MINDISTANCE;
 #ifdef PSPACE
 extern unsigned int PSPACESIZE;
 #endif
+extern int start_order_random;
 
 #if defined(__GNUC__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ >= 40500)
 #define COMPILER_HINT(x) /*do {if(!(x)) __builtin_unreachable();} while(0)*/;

@@ -38,6 +38,7 @@ unsigned int MINDISTANCE = 100;
 #ifdef PSPACE
 unsigned int PSPACESIZE = 500;
 #endif
+int start_order_random = 1;
 
 void _Noreturn error(const char* msg, ...) {
   va_list args;
@@ -222,6 +223,7 @@ int self_test() {
     freetext(redt);
     load1(&warriors[1], loadt2);
 
+    start_order_random = 0; //it's not random in pMARS
     wins = 0;
     for(n = 0; n < 10000; ++n) {
       if(n % 1000 == 0) printf("Round %d (%f%% wins)\n", n, 100.0*wins/(n?:1)); //D
@@ -273,6 +275,7 @@ int self_test() {
     }
     remove(PATH_TEST_IN);
     remove(PATH_TEST_OUT);
+    start_order_random = 1;
     break;
   }
 
