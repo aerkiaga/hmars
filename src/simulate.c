@@ -424,6 +424,10 @@ void place_generic(_corefun0) {
     l_positions[c] = l_positions[c2];
     l_positions[c2] = tmp;
   }
+
+  for(c = 0; c < WARRIORS; ++c) { //Write positions to warriors
+    warriors[c].pos = l_positions[c];
+  }
   return;
 }
 

@@ -246,6 +246,7 @@ typedef struct tINSTR2 {
 
 struct t_WARRIOR {
   unsigned long org;
+  unsigned long pos; //last position in core
   char* name; //;name
   char* author; //;author
   char* version; //;version

@@ -21,6 +21,12 @@
 #include <signal.h>
 
 #define PATH_TEST_TEST "./test/test.red"
+#define PATH_TEST_DUMMY "./test/dummy.red"
+#define PATH_TEST_PMARS "./pmars"
+#define PATH_TEST_IN "./__in__"
+#define PATH_TEST_OUT "./__out__"
+#define CHECK_CMD "2>__out__"
+#define STDOUT_CMD ">__out__"
 
 unsigned int ROUNDS = 1;
 unsigned int WARRIORS = 0;
@@ -180,14 +186,107 @@ int self_test() {
     warriors[0].code2 = NULL;
   }
 
-  #ifdef PSPACE
-  free(warriors[0].pspace);
-  warriors[0].pspace = NULL;
-  #endif
-  mdestroy(warriors[0].mutex);
+  printf("wins: %d / 10000\n", wins);
+  puts("PASSED!");
+
+  /*TEST 2*/
+  puts("TEST 2: classic vs pMARS");
+  for(;;) { //dummy loop, acts like 'try' block
+    if(!system(NULL)) {
+      puts("There is no usable command processor.");
+      break;
+    }
+    char str[200];
+    snprintf(str, 200, "%s %s", PATH_TEST_PMARS, CHECK_CMD);
+    system(str);
+    FILE* out = fopen(PATH_TEST_OUT, "rt");
+    int res = fscanf(out, "pMARS %99s", str);
+    fclose(out);
+    if(res < 1) {
+      remove(PATH_TEST_OUT);
+      puts("There is no pMARS in the current directory.");
+      break;
+    }
+    *(strchr(str, ',') ?: &str[199]) = '\0';
+    printf("Found pMARS %s\n", str);
+
+    set_nwarriors(2);
+    init_warrior(&warriors[1]);
+    red = fopen(PATH_TEST_DUMMY, "rt");
+    if(red == NULL) {
+      error("Could not open %s.", PATH_TEST_DUMMY);
+    }
+    redt = file2text(red);
+    fclose(red);
+    LINE* loadt2 = parse(redt, &warriors[1]);
+    freetext(redt);
+    load1(&warriors[1], loadt2);
+
+    wins = 0;
+    for(n = 0; n < 10000; ++n) {
+      if(n % 1000 == 0) printf("Round %d (%f%% wins)\n", n, 100.0*wins/(n?:1)); //D
+      load1(&warriors[0], loadt);
+      test_crash_loaded = 1;
+
+      int w;
+      reset_warrior(&warriors[0]);
+      battle1_single(1);
+      w = warriors[0].ties || warriors[0].wins;
+
+      FILE* in = fopen(PATH_TEST_IN, "wt");
+      output_disassembled_code(in, &warriors[0]);
+      fclose(in);
+      snprintf(str, 200, "%s -r 1 -s %d -c %d -p %d -l %d -d %d -S %d -F %ld -b -k %s %s %s",
+        PATH_TEST_PMARS, CORESIZE, MAXCYCLES, MAXPROCESSES, MAXLENGTH, MINDISTANCE, PSPACESIZE, warriors[1].pos, PATH_TEST_IN, PATH_TEST_DUMMY, STDOUT_CMD);
+      system(str);
+
+      out = fopen(PATH_TEST_OUT, "rt");
+      char ch1, ch2;
+      res = fscanf(out, "%c %c", &ch1, &ch2);
+      fclose(out);
+
+      if(res < 1) {
+        puts("Could not parse pMARS output.");
+        free(warriors);
+        puts("");
+        puts("FAILED!");
+        return 1;
+      }
+
+      if(w != (ch1 - '0' || ch2 - '0')) {
+        puts("The two simulators produced different results.");
+        if(w) puts("Classic wins, pMARS loses.");
+        else puts("pMARS wins, classic loses.");
+        printf("Dummy warrior placed at %ld\n", warriors[1].pos);
+        print_offending_code();
+
+        free(warriors);
+        puts("");
+        puts("FAILED!");
+        return 1;
+      }
+
+      wins += w;
+      test_crash_loaded = 0;
+      free(warriors[0].code1);
+      warriors[0].code1 = NULL;
+    }
+    remove(PATH_TEST_IN);
+    remove(PATH_TEST_OUT);
+    break;
+  }
 
   printf("wins: %d / 10000\n", wins);
   puts("PASSED!");
+
+  #ifdef PSPACE
+  free(warriors[0].pspace);
+  warriors[0].pspace = NULL;
+  free(warriors[1].pspace);
+  warriors[1].pspace = NULL;
+  #endif
+  mdestroy(warriors[0].mutex);
+  mdestroy(warriors[1].mutex);
 
   unload_all();
   return 0;
