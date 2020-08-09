@@ -307,8 +307,6 @@ void inline hook_ondec_B(_corefunc int16_t ptr) { //perform decrement (B-field)
 #endif
 
 #ifdef PSPACE
-//#define PSPACE0_READ_ONLY
-//TODO: make this switch work for JIT too (default must be disabled, now is enabled)
 #if defined(_COREVIEW_not_yet)
 #define HOOK_ONPREAD
 uint16_t inline hook_onpread(_corefunc unsigned long w, int16_t pos) { //return value
@@ -321,17 +319,11 @@ uint16_t inline hook_onpread(_corefunc unsigned long w, int16_t pos) { //return 
 #define HOOK_ONPWRITE
 void inline hook_onpwrite(_corefunc unsigned long w, int16_t pos, int16_t val) { //write value to P-space
   if(pos) warriors[l_indices[w]].pspace[pos] = val;
-#if !defined(PSPACE0_READ_ONLY)
   else warriors[l_indices[w]].psp0 = val;
-#endif
   return;
 }
 #else
-#if defined(PSPACE0_READ_ONLY)
-#define hook_onpwrite(w, x, y) do { if(x) warriors[l_indices[w]].pspace[x] = y; } while(0)
-#else
 #define hook_onpwrite(w, x, y) do { if(x) warriors[l_indices[w]].pspace[x] = y; else warriors[l_indices[w]].psp0 = y; } while(0)
-#endif
 #endif
 #endif
 
