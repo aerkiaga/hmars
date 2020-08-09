@@ -36,9 +36,12 @@ unsigned int PSPACESIZE = 500;
 void _Noreturn error(const char* msg, ...) {
   va_list args;
   va_start(args, msg);
-  char str[strlen(msg) + 14];
-  sprintf(str, "Fatal Error: %s\n", msg);
+  const char const* second_format = "Fatal Error: %s\n";
+  size_t required_length = snprintf(NULL, 0, second_format, msg) + 1;
+  char* str = (char*) malloc(required_length);
+  snprintf(str, required_length, second_format, msg);
   vprintf(str, args);
+  free(str);
   va_end(args);
   exit(0);
 }
