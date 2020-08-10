@@ -40,7 +40,9 @@ jit_context_t jit_context;
 #define JIT_PROC2_pos_L(p) jit_insn_load_relative(function, (p), offsetof(PROC2, pos), jit_type_addr2)
 #define JIT_PROC2_pos_S(p, v) jit_insn_store_relative(function, (p), offsetof(PROC2, pos), (v))
 #define JIT_W_ADDR() jit_insn_add_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_w2))
+//TODO: map unordered to ordered via l_indices //!
 #define JIT_W() jit_insn_load_relative(function, w_addr, 0, jit_type_ulong)
+#define JIT_ORDERED_W() jit_insn_load_elem(function, jit_insn_load_relative(function, local_core_jit, offsetof(LOCAL_CORE, la_indices), jit_type_void_ptr), JIT_W(), jit_type_ulong)
 #define JIT_TYPE(s)  (((jit_type_t[]){jit_type_ubyte, jit_type_ushort, (jit_type_t) 0, jit_type_uint, (jit_type_t) 0, (jit_type_t) 0, (jit_type_t) 0, jit_type_ulong})[sizeof(s)-1])
 
 int remove_proc_jit(_corefun0) { //returns 1 if battle ends, 0 otherwise
@@ -1810,7 +1812,7 @@ void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
           jit_label_t labelb2 = jit_label_undefined;
           jit_value_t tmpv = jit_value_create(function, jit_type_addr2);
 
-          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
           jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
             jit_value_t pspace = jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
             jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, j_types.pcell));
@@ -1829,7 +1831,7 @@ void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
           jit_label_t labelb2 = jit_label_undefined;
           jit_value_t tmpv = jit_value_create(function, jit_type_addr2);
 
-          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
           jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
             jit_value_t pspace = jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
             jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, j_types.pcell));
@@ -1848,7 +1850,7 @@ void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
           jit_label_t labelb2 = jit_label_undefined;
           jit_value_t tmpv = jit_value_create(function, jit_type_addr2);
 
-          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
           jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
             jit_value_t pspace = jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
             jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, j_types.pcell));
@@ -1867,7 +1869,7 @@ void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
           jit_label_t labelb2 = jit_label_undefined;
           jit_value_t tmpv = jit_value_create(function, jit_type_addr2);
 
-          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmp2 = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
           jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
             jit_value_t pspace = jit_insn_load_relative(function, tmp2, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
             jit_insn_store(function, tmpv, jit_insn_load_elem(function, pspace, tmpx_, j_types.pcell));
@@ -1893,46 +1895,62 @@ void compile_instr(INSTR1 c1_c, J_LOCALS* j_locals) {
         case M_A: {
           jit_value_t tmpx = bi_a;
           jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
+          jit_label_t labele2 = jit_label_undefined;
           jit_label_t labelb2 = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
-            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
+          jit_value_t tmpv = jit_insn_convert(function, ai_a, j_types.pcell, 0);
+          jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
             jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
-            jit_value_t tmpv = jit_insn_convert(function, ai_a, j_types.pcell, 0);
             jit_insn_store_elem(function, pspace, tmpx_, tmpv);
+          jit_insn_branch(function, &labelb2);
+          jit_insn_label(function, &labele2);
+            jit_insn_store_relative(function, tmp2_, offsetof(WARRIOR, psp0), tmpv); //.psp0
           jit_insn_label(function, &labelb2);
           break; }
         case M_B: case M_I: case M_F: case M_X: {
-          jit_value_t tmpx = bi_b;
-          jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
-          jit_label_t labelb2 = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
-            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
-            jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+            jit_value_t tmpx = bi_b;
+            jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
+            jit_label_t labele2 = jit_label_undefined;
+            jit_label_t labelb2 = jit_label_undefined;
+            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
             jit_value_t tmpv = jit_insn_convert(function, ai_b, j_types.pcell, 0);
-            jit_insn_store_elem(function, pspace, tmpx_, tmpv);
-          jit_insn_label(function, &labelb2);
+            jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
+              jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+              jit_insn_store_elem(function, pspace, tmpx_, tmpv);
+            jit_insn_branch(function, &labelb2);
+            jit_insn_label(function, &labele2);
+              jit_insn_store_relative(function, tmp2_, offsetof(WARRIOR, psp0), tmpv); //.psp0
+            jit_insn_label(function, &labelb2);
           break; }
         case M_AB: {
-          jit_value_t tmpx = bi_b;
-          jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
-          jit_label_t labelb2 = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
-            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
-            jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+            jit_value_t tmpx = bi_b;
+            jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
+            jit_label_t labele2 = jit_label_undefined;
+            jit_label_t labelb2 = jit_label_undefined;
+            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
             jit_value_t tmpv = jit_insn_convert(function, ai_a, j_types.pcell, 0);
-            jit_insn_store_elem(function, pspace, tmpx_, tmpv);
-          jit_insn_label(function, &labelb2);
+            jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
+              jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+              jit_insn_store_elem(function, pspace, tmpx_, tmpv);
+            jit_insn_branch(function, &labelb2);
+            jit_insn_label(function, &labele2);
+              jit_insn_store_relative(function, tmp2_, offsetof(WARRIOR, psp0), tmpv); //.psp0
+            jit_insn_label(function, &labelb2);
           break; }
         case M_BA: {
-          jit_value_t tmpx = bi_a;
-          jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
-          jit_label_t labelb2 = jit_label_undefined;
-          jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labelb2);
-            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_W(), j_types.warrior); //warriors[w]
-            jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+            jit_value_t tmpx = bi_a;
+            jit_value_t tmpx_ = jit_insn_rem(function, tmpx, JIT_CONST(PSPACESIZE, jit_type_addr2));
+            jit_label_t labele2 = jit_label_undefined;
+            jit_label_t labelb2 = jit_label_undefined;
+            jit_value_t tmp2_ = jit_insn_load_elem_address(function, JIT_CONST(warriors, jit_type_void_ptr), JIT_ORDERED_W(), j_types.warrior); //warriors[w]
             jit_value_t tmpv = jit_insn_convert(function, ai_b, j_types.pcell, 0);
-            jit_insn_store_elem(function, pspace, tmpx_, tmpv);
-          jit_insn_label(function, &labelb2);
+            jit_insn_branch_if_not(function, jit_insn_to_bool(function, tmpx_), &labele2);
+              jit_value_t pspace = jit_insn_load_relative(function, tmp2_, offsetof(WARRIOR, pspace), jit_type_void_ptr); //.pspace
+              jit_insn_store_elem(function, pspace, tmpx_, tmpv);
+            jit_insn_branch(function, &labelb2);
+            jit_insn_label(function, &labele2);
+              jit_insn_store_relative(function, tmp2_, offsetof(WARRIOR, psp0), tmpv); //.psp0
+            jit_insn_label(function, &labelb2);
           break; }
       }
       break; }
