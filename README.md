@@ -75,3 +75,20 @@ Symbols | Meaning
 **⠒⠂** &nbsp; **⠉⠀** &nbsp; **⠉** &nbsp; &nbsp; **⠁** | Decremented
 **⠿⠇** &nbsp; **⠛⠀** &nbsp; **⠛** &nbsp; &nbsp; **⠁** | Executed
 **⣿⣿** &nbsp; **⠿⠇** &nbsp; **⠛** &nbsp; &nbsp; **⠁** | In execution
+
+Color | Instruction | Color | Instruction
+----- | ----------- | ----- | -----------
+![Stuff](https://via.placeholder.com/30/000000/000000?text=+) | `DAT` | ![Stuff](https://via.placeholder.com/30/000080/000000?text=+) | `MOV`
+![Stuff](https://via.placeholder.com/30/206020/000000?text=+) | `ADD` | ![Stuff](https://via.placeholder.com/30/205030/000000?text=+) | `SUB`
+![Stuff](https://via.placeholder.com/30/305020/000000?text=+) | `MUL` | ![Stuff](https://via.placeholder.com/30/284028/000000?text=+) | `DIV`
+![Stuff](https://via.placeholder.com/30/204020/000000?text=+) | `MOD` | ![Stuff](https://via.placeholder.com/30/602020/000000?text=+) | `JMP`
+![Stuff](https://via.placeholder.com/30/502820/000000?text=+) | `JMZ` | ![Stuff](https://via.placeholder.com/30/502028/000000?text=+) | `JMN`
+![Stuff](https://via.placeholder.com/30/604010/000000?text=+) | `DJZ`\*\* | ![Stuff](https://via.placeholder.com/30/603800/000000?text=+) | `DJN`
+![Stuff](https://via.placeholder.com/30/505000/000000?text=+) | `SEQ`/`CMP` | ![Stuff](https://via.placeholder.com/30/405000/000000?text=+) | `SNE`
+![Stuff](https://via.placeholder.com/30/405010/000000?text=+) | `SLT` | ![Stuff](https://via.placeholder.com/30/602040/000000?text=+) | `SPL`
+![Stuff](https://via.placeholder.com/30/2A2A2A/000000?text=+) | `NOP` | ![Stuff](https://via.placeholder.com/30/202050/000000?text=+) | `LDP`
+![Stuff](https://via.placeholder.com/30/203048/000000?text=+) | `STP` | ![Stuff](https://via.placeholder.com/30/502050/000000?text=+) | `XCH`*
+![Stuff](https://via.placeholder.com/30/502050/000000?text=+) | `PCT`* | ![Stuff](https://via.placeholder.com/30/502050/000000?text=+) | `STS`*
+
+\* non-standard extensions \
+\*\* non-standard extension, part of pre-ICWS ('84)
