@@ -63,4 +63,15 @@ Option | Description | Default
 `--test` | Ignores remaining options and performs self-test. | -
 
 ### Debugger
-The debugger is not currently finished. For now, it only displays the ongoing round in a rectangular area. It starts paused, and clicking on it begins the simulation.
+The debugger is not currently finished. For now, it only displays the ongoing
+round in a rectangular area, which can be resized.
+
+Symbols | Meaning
+------ | -------
+**⠀⠀** &nbsp; **⠀⠀** &nbsp; **⠀** &nbsp; &nbsp; **⠀** | None
+**⠐⠀** &nbsp; **⠁⠀** &nbsp; **⠁** &nbsp; &nbsp; **⠀** | Read from
+**⠕⠅** &nbsp; **⠑⠀** &nbsp; **⠑** &nbsp; &nbsp; **⠁** | Written to
+**⠺⠂** &nbsp; **⠃⠀** &nbsp; **⠃** &nbsp; &nbsp; **⠁** | Incremented
+**⠒⠂** &nbsp; **⠉⠀** &nbsp; **⠉** &nbsp; &nbsp; **⠁** | Decremented
+**⠿⠇** &nbsp; **⠛⠀** &nbsp; **⠛** &nbsp; &nbsp; **⠁** | Executed
+**⣿⣿** &nbsp; **⠿⠇** &nbsp; **⠛** &nbsp; &nbsp; **⠁** | In execution
