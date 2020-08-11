@@ -1,4 +1,6 @@
 CC = gcc
+DEFAULT_CFLAGS = -Wall -O3 -g -march=native
+
 SRC_DIR = src
 OBJ = main.o simulate.o load.o jit.o parser.o debug.o entropy.o
 LIB = $(JIT_LIB) -pthread -lm
@@ -6,8 +8,8 @@ JIT_LIB = -L/usr/local/lib -ljit -Wl,-rpath=/usr/local/lib
 SDL_LIB = -lSDL2
 SDL_INC = -I/usr/include/SDL2
 
-hmars: CFLAGS = -Wall -O3 -g -march=native $(SRC)
-hmars-gui: CFLAGS = -Wall -O3 -g -march=native -D_COREVIEW_ $(SDL_INC) $(SRC)
+hmars: CFLAGS = $(DEFAULT_CFLAGS) $(SRC)
+hmars-gui: CFLAGS = $(DEFAULT_CFLAGS) -D_COREVIEW_ $(SDL_INC) $(SRC)
 hmars: LDFLAGS = $(LIB) $(SRC)
 hmars-gui: LDFLAGS = $(SDL_LIB) $(LIB) $(SRC)
 

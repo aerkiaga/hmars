@@ -9,12 +9,36 @@ A fast and feature-rich Memory Array Redcode Simulator for Corewar.
 
 **WARNING:** This is a work-in-progress; the current version should not be considered stable, and still contains much unfinished code.
 
-## Installation
-1. Take a look at src/config.h, this contains several useful configuration options.
-2. Build one of the following:
+## Installation (Linux-only)
+First, install the required dependencies. The latest GNU LibJIT is required at
+the moment, and it must be built from source. GNU Autotools are required; on an
+Ubuntu-based distro they can be obtained with:
+
+    sudo apt-get install automake autotools-dev libtool
+
+Then, build and install LibJIT:
+
+    git clone https://git.savannah.gnu.org/git/libjit.git
+    cd libjit
+    ./bootstrap
+    ./configure --prefix=/usr/local
+    make
+    sudo make install
+
+If the optional SDL debugger is desired, then install SDL 2 too:
+
+    sudo apt-get install libsdl2-dev
+
+Take a look at src/config.h, this contains several useful configuration options.
+Also inspect the Makefile, for changing the default compiler and flags.
+
+Build one of the following:
    * Type `make hmars` to build the command-line version.
    * Type `make hmars-gui` to build the SDL interactive debugger.
    * Type `make` or `make all` to build both of them.
+
+Optionally, run `./hmars --test` to check that everything is right. This depends
+on the warriors found in `./test` to work.
 
 ## Usage
 ### Command line
