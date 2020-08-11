@@ -204,7 +204,6 @@ int self_test() {
     char str[200];
     snprintf(str, 200, "%s %s", PATH_TEST_PMARS, CHECK_CMD);
     int status = system(str);
-    if(status) error("command \'%s\' returned error", str);
     FILE* out = fopen(PATH_TEST_OUT, "rt");
     int res = fscanf(out, "pMARS %99s", str);
     fclose(out);
