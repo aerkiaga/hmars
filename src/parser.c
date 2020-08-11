@@ -2775,7 +2775,6 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
                 label[labend-labstart] = '\0';
                 if(!validate_label(line, label)) {
                   free(label);
-                  if(parsopt.labels_case_sens) free(lAbel);
                   freetext(txt);
                   return NULL;
                 }
