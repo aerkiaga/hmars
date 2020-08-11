@@ -39,6 +39,7 @@ unsigned int MINDISTANCE = 100;
 unsigned int PSPACESIZE = 500;
 #endif
 int start_order_random = 1;
+long int second_pos = -1;
 
 void _Noreturn error(const char* msg, ...) {
   va_list args;
@@ -362,6 +363,11 @@ int main(int argc, char* argv[]) {
           sscanf(argv[c], "%d", &PSPACESIZE);
           break;
         #endif
+        case 'F':
+          ++c;
+          if(c == argc) error("Option -F must be followed by a number.");
+          sscanf(argv[c], "%ld", &second_pos);
+          break;
         case '-':
           if(!strcmp(&(argv[c][2]), "test")) {
             ++c;
@@ -392,7 +398,8 @@ int main(int argc, char* argv[]) {
   #ifdef PSPACE
     if(CORESIZE % PSPACESIZE) puts("Warning: PSPACESIZE should be a factor of CORESIZE");
   #endif
-  if(CORESIZE < MINDISTANCE*2) puts("CORESIZE should be at least equal to MINDISTANCE*2");
+  if(CORESIZE < MINDISTANCE*2) puts("Warning: CORESIZE should be at least equal to MINDISTANCE*2");
+  if((second_pos > 0) && (WARRIORS != 2)) puts("Warning: option -F only has effect with exactly 2 warriors. Ignoring");
 
   initialize();
   if(parse_load(redfn, lfn, argv[0])) {

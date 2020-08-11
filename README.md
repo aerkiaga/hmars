@@ -32,6 +32,7 @@ Option | Description | Default
 `-p <procs>` | Maximum number of processes per warrior. | 8000
 `-l <length>` | Maximum warrior length. | 100
 `-d <dist>` | Minimum distance between warriors. | 100
+`-F <position>` | Fixed position of second warrior (needs exactly 2 warriors). | None
 `-S <size>` | Size of P-space in cells. | CORESIZE/16
 `-L <loadfile>` | Must come after warrior file, specifies optional load file to output. | None
 `-V` | Increase verbosity by one level, up to 2 levels. | -
