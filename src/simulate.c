@@ -59,7 +59,7 @@ int inline check_terminate() {
 */
 #if defined(EXT_PCT_b) || defined(_COREVIEW_)
 #define HOOK_ONEXEC
-void inline hook_onexec(_corefunc int16_t ptr, unsigned long w) {
+static void inline hook_onexec(_corefunc int16_t ptr, unsigned long w) {
   //w is unordered warrior index, ordered index can be obtained as l_indices[w]
   #if defined(_COREVIEW_)
   l_hook_lastw_ordered = l_indices[w];
