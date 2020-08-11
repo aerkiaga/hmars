@@ -2314,12 +2314,21 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
         txt = line->next; //discard
       }
       else if(l == 0) { //other special/full line comments
-        if(!strncmp(line->data, ";assert ", 7)) { //;assert lines will not be removed yet
+        if(!strncmp(line->data, ";assert", 7)) { //;assert lines will not be removed yet
           //no code inside
         }
         else {
+          int prev_length = line->len;
+          while(isspace(line->data[line->len-1])) {
+            line->len--;
+          }
+          if(line->len != prev_length) {
+              line->data = (char*) realloc(line->data, line->len+1);
+              line->data[line->len] = '\0';
+          }
           if(!strncmp(line->data, ";name ", 6)) {
-            int len2 = line->len - 6;
+            int leading_length = 5 + strspn(&line->data[5], " \t");
+            int len2 = line->len - leading_length;
             if(w->name != NULL) {
               parser_error(line, "multiple ;name lines present");
               freetext(txt);
@@ -2327,10 +2336,11 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
               return NULL;
             }
             w->name = (char*) malloc(len2+1);
-            strcpy(w->name, &line->data[6]);
+            strcpy(w->name, &line->data[leading_length]);
           }
-          else if(!strncmp(line->data, ";author ", 7)) {
-            int len2 = line->len - 7;
+          else if(!strncmp(line->data, ";author ", 8)) {
+            int leading_length = 7 + strspn(&line->data[7], " \t");
+            int len2 = line->len - leading_length;
             if(w->author != NULL) {
               parser_error(line, "multiple ;author lines present");
               freetext(txt);
@@ -2338,10 +2348,11 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
               return NULL;
             }
             w->author = (char*) malloc(len2+1);
-            strcpy(w->author, &line->data[7]);
+            strcpy(w->author, &line->data[leading_length]);
           }
-          else if(!strncmp(line->data, ";version ", 8)) {
-            int len2 = line->len - 8;
+          else if(!strncmp(line->data, ";version ", 9)) {
+            int leading_length = 8 + strspn(&line->data[8], " \t");
+            int len2 = line->len - leading_length;
             if(w->version != NULL) {
               parser_error(line, "multiple ;version lines present");
               freetext(txt);
@@ -2349,10 +2360,11 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
               return NULL;
             }
             w->version = (char*) malloc(len2+1);
-            strcpy(w->version, &line->data[8]);
+            strcpy(w->version, &line->data[leading_length]);
           }
-          else if(!strncmp(line->data, ";date ", 5)) {
-            int len2 = line->len - 5;
+          else if(!strncmp(line->data, ";date ", 6)) {
+            int leading_length = 5 + strspn(&line->data[5], " \t");
+            int len2 = line->len - leading_length;
             if(w->date != NULL) {
               parser_error(line, "multiple ;date lines present");
               freetext(txt);
@@ -2363,16 +2375,17 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
             strcpy(w->date, &line->data[5]);
           }
           else if(!strncmp(line->data, ";strategy ", 10)) {
-            int len2 = line->len - 9;
+            int leading_length = 9 + strspn(&line->data[9], " \t");
+            int len2 = line->len - leading_length;
             if(w->strategy != NULL) {
               int len3 = strlen(w->strategy);
               w->strategy = (char*) realloc(w->strategy, len3 + len2 + 2);
               w->strategy[len3] = '\n';
-              strcpy(&w->strategy[len3+1], &line->data[10]);
+              strcpy(&w->strategy[len3+1], &line->data[leading_length]);
             }
             else {
               w->strategy = (char*) malloc(len2+1);
-              strcpy(w->strategy, &line->data[10]);
+              strcpy(w->strategy, &line->data[leading_length]);
             }
           }
           if(txt == line) txt = line->next; //mark for later removal
