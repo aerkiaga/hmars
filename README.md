@@ -38,7 +38,8 @@ Build one of the following:
    * Type `make` or `make all` to build both of them.
 
 Optionally, run `./hmars --test` to check that everything is right. This depends
-on the warriors found in `./test` to work.
+on the warriors found in `./test` to work. If a pMARS executable is present in
+the current directory as `./pmars`, hMARS will check itself against it.
 
 ## Usage
 ### Command line
