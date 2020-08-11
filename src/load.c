@@ -542,6 +542,9 @@ void reset_warrior(WARRIOR* w) {
 }
 
 void init_warrior(WARRIOR* w) {
+  w->code1 = (INSTR1*) NULL;
+  w->code2 = (INSTR2*) NULL;
+  w->name = w->author = w->strategy = (char*) NULL;
   #ifdef PSPACE
   w->pspace = malloc(PSPACESIZE * sizeof(pcell_t));
   #endif

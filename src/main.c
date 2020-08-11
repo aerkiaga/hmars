@@ -92,6 +92,7 @@ void _Noreturn display_help_exit() {
 
 int opt_VERBOSE = 0;
 
+#ifndef _COREVIEW_
 void print_offending_code() {
   puts("Loaded code of the offending warrior:");
   int c;
@@ -302,6 +303,7 @@ int self_test() {
   unload_all();
   return 0;
 }
+#endif //_COREVIEW_
 
 int main(int argc, char* argv[]) {
   #if __STDC_VERSION__ >= 201112L
@@ -372,7 +374,11 @@ int main(int argc, char* argv[]) {
         case '-':
           if(!strcmp(&(argv[c][2]), "test")) {
             ++c;
+            #ifdef _COREVIEW_
+            error("option --test is only valid for command-line version.");
+            #else
             return self_test();
+            #endif
           }
           else {
             error("Unknown option %s", argv[c]);

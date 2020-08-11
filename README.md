@@ -46,7 +46,6 @@ on the warriors found in `./test` to work.
     hmars [options] file1 [-l loadfile] file2 ...
     hmars --test
     hmars-gui [options] file1 [-l loadfile] file2 ...
-    hmars-gui --test
 
 Option | Description | Default
 ------ | ------------|---------
