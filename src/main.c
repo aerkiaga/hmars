@@ -261,14 +261,9 @@ int self_test() {
         puts("The two simulators produced different results.");
         if(w) puts("Classic wins, pMARS loses.");
         else puts("pMARS wins, classic loses.");
-<<<<<<< HEAD
-        printf("Test warrior placed at %ld\n", warriors[0].pos);
-        printf("Dummy warrior placed at %ld\n", warriors[1].pos);
-=======
         printf("Dummy warrior placed at %ld\n", dummy_position);
         printf("\n\tWARRIOR 0\nName:\t%s\nPosition:\t%ld\n", warriors[0].name, warriors[0].pos);
         printf("\n\tWARRIOR 1\nName:\t%s\nPosition:\t%ld\n", warriors[1].name, warriors[1].pos);
->>>>>>> 9cdc10c9bc805d8c84f5392726d4c8f98bceba4d
         print_offending_code();
 
         free(warriors);
