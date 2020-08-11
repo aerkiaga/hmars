@@ -285,20 +285,14 @@ int self_test() {
     remove(PATH_TEST_IN);
     remove(PATH_TEST_OUT);
     start_order_random = 1;
+    free(warriors[1].code1);
+    warriors[1].code1 = NULL;
+
+    printf("wins: %d / 10000\n", wins);
+    puts("PASSED!");
+
     break;
   }
-
-  printf("wins: %d / 10000\n", wins);
-  puts("PASSED!");
-
-  #ifdef PSPACE
-  free(warriors[0].pspace);
-  warriors[0].pspace = NULL;
-  free(warriors[1].pspace);
-  warriors[1].pspace = NULL;
-  #endif
-  mdestroy(warriors[0].mutex);
-  mdestroy(warriors[1].mutex);
 
   unload_all();
   return 0;
