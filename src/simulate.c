@@ -399,30 +399,35 @@ void sort16u_desc_sparse(uint16_t* buf, unsigned int num, unsigned int min, unsi
 void place_generic(_corefun0) {
   int c;
   l_positions[0] = 0;
-  unsigned long g;
-  uint16_t* posbuffer = malloc(WARRIORS * 2); //element at index 0 is not used
-  for(c = 1; c < WARRIORS; ++c) { //generate numbers
-    posbuffer[c] = MINDISTANCE + pcg32_boundedrand_r(&randomgen, CORESIZE - MINDISTANCE*WARRIORS + 1);
+  if((second_pos >= 0) && (WARRIORS == 2)) {
+    l_positions[1] = second_pos % CORESIZE;
   }
-  //sort all positions except 0 (map all simplices to one)
-  sort16u_desc_sparse(posbuffer + 1, WARRIORS - 1, MINDISTANCE, CORESIZE - MINDISTANCE*WARRIORS + 1);
-  for(c = 1; c < WARRIORS-1; ++c) { //transformation matrix
-    l_positions[c] = posbuffer[c] - posbuffer[c+1] + MINDISTANCE;
-  }
-  if(WARRIORS > 1) l_positions[WARRIORS-1] = posbuffer[WARRIORS-1];
-  free(posbuffer);
+  else {
+    unsigned long g;
+    uint16_t* posbuffer = malloc(WARRIORS * 2); //element at index 0 is not used
+    for(c = 1; c < WARRIORS; ++c) { //generate numbers
+      posbuffer[c] = MINDISTANCE + pcg32_boundedrand_r(&randomgen, CORESIZE - MINDISTANCE*WARRIORS + 1);
+    }
+    //sort all positions except 0 (map all simplices to one)
+    sort16u_desc_sparse(posbuffer + 1, WARRIORS - 1, MINDISTANCE, CORESIZE - MINDISTANCE*WARRIORS + 1);
+    for(c = 1; c < WARRIORS-1; ++c) { //transformation matrix
+      l_positions[c] = posbuffer[c] - posbuffer[c+1] + MINDISTANCE;
+    }
+    if(WARRIORS > 1) l_positions[WARRIORS-1] = posbuffer[WARRIORS-1];
+    free(posbuffer);
 
-  g = 0;
-  for(c = 1; c < WARRIORS; ++c) { //distances to positions
-    g += l_positions[c];
-    l_positions[c] = g;
-  }
+    g = 0;
+    for(c = 1; c < WARRIORS; ++c) { //distances to positions
+      g += l_positions[c];
+      l_positions[c] = g;
+    }
 
-  for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (shuffle warriors, except first)
-    unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
-    uint16_t tmp = l_positions[c];
-    l_positions[c] = l_positions[c2];
-    l_positions[c2] = tmp;
+    for(c = WARRIORS-1; c; --c) { //Fisher-Yates shuffling algorithm (shuffle warriors, except first)
+      unsigned long c2 = pcg32_boundedrand_r(&randomgen, c+1);
+      uint16_t tmp = l_positions[c];
+      l_positions[c] = l_positions[c2];
+      l_positions[c2] = tmp;
+    }
   }
 
   for(c = 0; c < WARRIORS; ++c) { //Write positions to warriors
