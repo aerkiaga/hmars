@@ -44,7 +44,7 @@ long int second_pos = -1;
 void _Noreturn error(const char* msg, ...) {
   va_list args;
   va_start(args, msg);
-  const char const* second_format = "Fatal Error: %s\n";
+  const char* const second_format = "Fatal Error: %s\n";
   size_t required_length = snprintf(NULL, 0, second_format, msg) + 1;
   char* str = (char*) malloc(required_length);
   snprintf(str, required_length, second_format, msg);
@@ -203,7 +203,8 @@ int self_test() {
     }
     char str[200];
     snprintf(str, 200, "%s %s", PATH_TEST_PMARS, CHECK_CMD);
-    system(str);
+    int status = system(str);
+    if(status) error("command \'%s\' returned error", str);
     FILE* out = fopen(PATH_TEST_OUT, "rt");
     int res = fscanf(out, "pMARS %99s", str);
     fclose(out);
@@ -245,7 +246,8 @@ int self_test() {
       unsigned long dummy_position = warriors[1].pos ?: (CORESIZE - warriors[0].pos);
       snprintf(str, 200, "%s -r 1 -s %d -c %d -p %d -l %d -d %d -S %d -F %ld -b -k %s %s %s",
         PATH_TEST_PMARS, CORESIZE, MAXCYCLES, MAXPROCESSES, MAXLENGTH, MINDISTANCE, PSPACESIZE, dummy_position, PATH_TEST_IN, PATH_TEST_DUMMY, STDOUT_CMD);
-      system(str);
+      status = system(str);
+      if(status) error("command \'%s\' returned error", str);
 
       out = fopen(PATH_TEST_OUT, "rt");
       char ch1, ch2;

@@ -598,7 +598,9 @@ LINE* file2text(FILE* file) {
       r = rc;
     }
     fseek(file, pos, SEEK_SET);
-    fgets(rc->data, l+1, file);
+    if(!fgets(rc->data, l+1, file)) {
+        error("could not read line in input file");
+    }
     if(crlf) fgetc(file); //skip CR in CRLF
     fgetc(file); //advance to next line
     rc->nhist = 1;
@@ -2560,6 +2562,9 @@ LINE* parse(LINE* red, WARRIOR* w) { //returns load file
                 lAbel = (char*) malloc(labend-labstart+1);
                 int c2; for(c2 = 0; label[c2] != '\0'; ++c2) lAbel[c2] = toupper(label[c2]);
                 lAbel[labend-labstart] = '\0';
+              }
+              else {
+                  lAbel = NULL; //unnecessary
               }
               if(get_dictionary(&d_opcodes, label) != NULL) {
                 parser_error(line, "constant \"%s\" has same name as an opcode.", label);
