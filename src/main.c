@@ -239,8 +239,9 @@ int self_test() {
       FILE* in = fopen(PATH_TEST_IN, "wt");
       output_disassembled_code(in, &warriors[0]);
       fclose(in);
+      unsigned long dummy_position = warriors[1].pos ?: (CORESIZE - warriors[0].pos);
       snprintf(str, 200, "%s -r 1 -s %d -c %d -p %d -l %d -d %d -S %d -F %ld -b -k %s %s %s",
-        PATH_TEST_PMARS, CORESIZE, MAXCYCLES, MAXPROCESSES, MAXLENGTH, MINDISTANCE, PSPACESIZE, warriors[1].pos, PATH_TEST_IN, PATH_TEST_DUMMY, STDOUT_CMD);
+        PATH_TEST_PMARS, CORESIZE, MAXCYCLES, MAXPROCESSES, MAXLENGTH, MINDISTANCE, PSPACESIZE, dummy_position, PATH_TEST_IN, PATH_TEST_DUMMY, STDOUT_CMD);
       system(str);
 
       out = fopen(PATH_TEST_OUT, "rt");
@@ -260,8 +261,14 @@ int self_test() {
         puts("The two simulators produced different results.");
         if(w) puts("Classic wins, pMARS loses.");
         else puts("pMARS wins, classic loses.");
+<<<<<<< HEAD
         printf("Test warrior placed at %ld\n", warriors[0].pos);
         printf("Dummy warrior placed at %ld\n", warriors[1].pos);
+=======
+        printf("Dummy warrior placed at %ld\n", dummy_position);
+        printf("\n\tWARRIOR 0\nName:\t%s\nPosition:\t%ld\n", warriors[0].name, warriors[0].pos);
+        printf("\n\tWARRIOR 1\nName:\t%s\nPosition:\t%ld\n", warriors[1].name, warriors[1].pos);
+>>>>>>> 9cdc10c9bc805d8c84f5392726d4c8f98bceba4d
         print_offending_code();
 
         free(warriors);

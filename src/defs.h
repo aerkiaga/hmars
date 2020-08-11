@@ -331,7 +331,7 @@ typedef struct t_LOCAL_CORE {
   PROC2** la_proc2; //unordered
   uint16_t* l_positions; //ordered
   unsigned long* la_nprocs; //unordered
-  unsigned long* l_indices; //maps unordered to ordered
+  unsigned long* la_indices; //maps unordered to ordered
   unsigned long la_nrunning; //number of warriors that remain alive
   int* l_running; //whether they are alive (ordered)
   #ifdef O_PCT
@@ -365,7 +365,7 @@ typedef struct t_LOCAL_CORE {
 #define l_proc1 local_core->l_proc1
 #define l_proc2 local_core->la_proc2 //different alias for standalone member use
 #define l_nprocs local_core->la_nprocs //different alias for standalone member use
-#define l_indices local_core->l_indices
+#define l_indices local_core->la_indices
 #define l_nrunning local_core->la_nrunning
 #define l_running local_core->l_running
 #define l_pool_proc1 local_core->l_pool_proc1

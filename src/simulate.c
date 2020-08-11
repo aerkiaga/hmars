@@ -309,20 +309,21 @@ void inline hook_ondec_B(_corefunc int16_t ptr) { //perform decrement (B-field)
 #ifdef PSPACE
 #if defined(_COREVIEW_not_yet)
 #define HOOK_ONPREAD
-uint16_t inline hook_onpread(unsigned long w, int16_t pos) { //return value
-  return (pos)? warriors[w].pspace[pos] : warriors[w].psp0;
+uint16_t inline hook_onpread(_corefunc unsigned long w, int16_t pos) { //return value
+  return (pos)? warriors[l_indices[w]].pspace[pos] : warriors[l_indices[w]].psp0;
 }
 #else
-#define hook_onpread(w, x) (x)? warriors[w].pspace[x] : warriors[w].psp0
+#define hook_onpread(w, x) (x)? warriors[l_indices[w]].pspace[x] : warriors[l_indices[w]].psp0
 #endif
 #if defined(_COREVIEW_not_yet)
 #define HOOK_ONPWRITE
-void inline hook_onpwrite(unsigned long w, int16_t pos, int16_t val) { //write value to P-space
-  if(pos) warriors[w].pspace[pos] = val;
+void inline hook_onpwrite(_corefunc unsigned long w, int16_t pos, int16_t val) { //write value to P-space
+  if(pos) warriors[l_indices[w]].pspace[pos] = val;
+  else warriors[l_indices[w]].psp0 = val;
   return;
 }
 #else
-#define hook_onpwrite(w, x, y) if(x) warriors[w].pspace[x] = y
+#define hook_onpwrite(w, x, y) do { if(x) warriors[l_indices[w]].pspace[x] = y; else warriors[l_indices[w]].psp0 = y; } while(0)
 #endif
 #endif
 
@@ -1602,6 +1603,23 @@ void simulate1(_corefun0) {
             mlock(mutex_pwarriors);
             l_pspace_local_accessed = 1;
           }
+          #ifdef HOOK_ONPREAD
+          #ifdef HOOK_ONWRITE
+          switch(I._M) {
+            case M_A: hook_onwrite_A(_corecall bp, hook_onpread(_corecall w, ai._A % PSPACESIZE)); break;
+            case M_B: case M_I: case M_F: case M_X: hook_onwrite_B(_corecall bp, hook_onpread(_corecall w, ai._B % PSPACESIZE)); break;
+            case M_AB: hook_onwrite_B(_corecall bp, hook_onpread(_corecall w, ai._A % PSPACESIZE)); break;
+            case M_BA: hook_onwrite_A(_corecall bp, hook_onpread(_corecall w, ai._B % PSPACESIZE)); break;
+          }
+          #else
+          switch(I._M) {
+            case M_A: hook_onwrite_A(bp, hook_onpread(_corecall w, ai._A % PSPACESIZE)); break;
+            case M_B: case M_I: case M_F: case M_X: hook_onwrite_B(bp, hook_onpread(_corecall w, ai._B % PSPACESIZE)); break;
+            case M_AB: hook_onwrite_B(bp, hook_onpread(_corecall w, ai._A % PSPACESIZE)); break;
+            case M_BA: hook_onwrite_A(bp, hook_onpread(_corecall w, ai._B % PSPACESIZE)); break;
+          }
+          #endif
+          #else
           #ifdef HOOK_ONWRITE
           switch(I._M) {
             case M_A: hook_onwrite_A(_corecall bp, hook_onpread(w, ai._A % PSPACESIZE)); break;
@@ -1617,6 +1635,7 @@ void simulate1(_corefun0) {
             case M_BA: hook_onwrite_A(bp, hook_onpread(w, ai._B % PSPACESIZE)); break;
           }
           #endif
+          #endif
           l_proc1[w]->pos++;
           BOUND_CORESIZE(l_proc1[w]->pos);
           l_proc1[w] = l_proc1[w]->next;
@@ -1629,6 +1648,26 @@ void simulate1(_corefun0) {
             l_pspace_local_accessed = 1;
           }
           int16_t pos;
+          #ifdef HOOK_ONPWRITE
+          switch(I._M) {
+            case M_A:
+              pos = bi._A % PSPACESIZE;
+              hook_onpwrite(_corecall w, pos, ai._A);
+              break;
+            case M_B: case M_I: case M_F: case M_X:
+              pos = bi._B % PSPACESIZE;
+              hook_onpwrite(_corecall w, pos, ai._B);
+              break;
+            case M_AB:
+              pos = bi._B % PSPACESIZE;
+              hook_onpwrite(_corecall w, pos, ai._A);
+              break;
+            case M_BA:
+              pos = bi._A % PSPACESIZE;
+              hook_onpwrite(_corecall w, pos, ai._B);
+              break;
+          }
+          #else
           switch(I._M) {
             case M_A:
               pos = bi._A % PSPACESIZE;
@@ -1647,6 +1686,7 @@ void simulate1(_corefun0) {
               hook_onpwrite(w, pos, ai._B);
               break;
           }
+          #endif
           l_proc1[w]->pos++;
           BOUND_CORESIZE(l_proc1[w]->pos);
           l_proc1[w] = l_proc1[w]->next;
