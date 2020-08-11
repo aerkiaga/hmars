@@ -1,4 +1,4 @@
-CC = clang
+CC = gcc
 SRC_DIR = src
 OBJ = main.o simulate.o load.o jit.o parser.o debug.o entropy.o
 LIB = $(JIT_LIB) -pthread -lm
@@ -21,10 +21,10 @@ all:
 	$(MAKE) hmars-gui
 
 hmars: $(OBJ)
-	$(CC) -o hmars $(LDFLAGS) $(OBJ)
+	$(CC) -o hmars $(OBJ) $(LDFLAGS)
 	$(MAKE) clean
 hmars-gui: $(OBJ)
-	$(CC) -o hmars-gui $(LDFLAGS) $(OBJ)
+	$(CC) -o hmars-gui $(OBJ) $(LDFLAGS)
 	$(MAKE) clean
 clean:
 	rm -f *.o
